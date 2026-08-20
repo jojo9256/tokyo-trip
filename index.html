@@ -536,7 +536,7 @@
 <script>
   const tripDays = [
     {
-      day:'D1', date:'11/14', title:'桃園 → 成田 → 宇都宮', hotel:'宇都宮光芒酒店 Candeo Hotels Utsunomiya',
+      day:'D1', date:'11/14', title:'桃園 → 成田 → 宇都宮', hotel:'宇都宮光芒酒店 Candeo Hotels Utsunomiya', booking:['5760355072','5502201920'],
       items:[
         {time:'08:25', text:'星宇航空 JX800｜桃園 T1 → 成田 T2', note:'12:35 抵達｜飛行時間約 3 小時 10 分', important:true},
         {time:'12:35', text:'抵達成田機場｜入境、領行李、租車'},
@@ -545,7 +545,7 @@
       ]
     },
     {
-      day:'D2', date:'11/15', title:'宇都宮 → 那須高原', hotel:'Hotel Epinard Nasu 那須温泉酒店',
+      day:'D2', date:'11/15', title:'宇都宮 → 那須高原', hotel:'Hotel Epinard Nasu 那須温泉酒店', booking:['5609303520'],
       items:[
         {time:'上午', text:'那須動物王國', map:'那須動物王國', food:true, guideRef:'nasu-kingdom'},
         {time:'午餐', text:'園區內解決'},
@@ -564,7 +564,7 @@
       ]
     },
     {
-      day:'D4', date:'11/17', title:'那須鹽原 → 日光・奧日光', hotel:'龜之井酒店 奧日光湯元',
+      day:'D4', date:'11/17', title:'那須鹽原 → 日光・奧日光', hotel:'龜之井酒店 奧日光湯元', booking:['5776137729'],
       items:[
         {time:'上午', text:'日光車站｜炸湯波饅頭、布丁', map:'日光駅', foodRef:'D4-0'},
         {time:'中午前', text:'中禪寺湖・華嚴瀑布', map:'華厳滝', guideRef:'chuzenji-kegon'},
@@ -574,7 +574,7 @@
       ]
     },
     {
-      day:'D5', date:'11/18', title:'奧日光 → 河口湖', hotel:'湖山亭',
+      day:'D5', date:'11/18', title:'奧日光 → 河口湖', hotel:'湖山亭', booking:['TDF45A0467329','T7816581E4EF3'],
       items:[
         {time:'早上', text:'日光東照宮', map:'日光東照宮', guideRef:'toshogu'},
         {time:'中午', text:'高速公路休息站，或下交流道找餐廳'},
@@ -583,7 +583,7 @@
       ]
     },
     {
-      day:'D6', date:'11/19', title:'河口湖 → 山中湖 → 御殿場', hotel:'HOTEL CLAD 御殿場',
+      day:'D6', date:'11/19', title:'河口湖 → 山中湖 → 御殿場', hotel:'HOTEL CLAD 御殿場', booking:['3625-3162-4917','3625-3164-2178'],
       items:[
         {time:'上午', text:'山中湖 THE PARK 咖啡廳吃點心', map:'THE PARK 山中湖', food:true, foodRef:'D6-0'},
         {time:'上午', text:'白糸瀑布・音止瀑布', map:'白糸の滝 静岡', note:'依天氣與富士山能見度彈性調整', guideRef:'shiraito-otodome'},
@@ -592,7 +592,7 @@
       ]
     },
     {
-      day:'D7', date:'11/20', title:'御殿場 → 成田', hotel:'成田國際花園酒店（暫定）',
+      day:'D7', date:'11/20', title:'御殿場 → 成田', hotel:'成田國際花園酒店（暫定）', booking:['5123731738'],
       items:[
         {time:'上午', text:'御殿場 Premium Outlets', map:'御殿場プレミアム アウトレット'},
         {time:'午餐', text:'Outlet 內用餐', food:true, foodRef:'D7-0'},
@@ -985,7 +985,10 @@
         </div>
         <div class="mt-4 p-3.5 rounded-2xl bg-mist/70 text-sm flex gap-2">
           <i class="fa-solid fa-bed text-moss mt-0.5"></i>
-          <span><b>住宿：</b>${d.hotel}</span>
+          <span>
+            <b>住宿：</b>${d.hotel}
+            ${d.booking?.length ? `<span class="block mt-1 text-xs text-black/50"><b>訂房代號：</b>${d.booking.join(' ／ ')}</span>` : ''}
+          </span>
         </div>
       </article>`;
     }).join('');
