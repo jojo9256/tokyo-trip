@@ -273,17 +273,6 @@
         <div id="guideCards" class="space-y-5"></div>
       </section>
 
-      <!-- FOOD -->
-      <section id="food" class="app-section space-y-4">
-        <div class="bg-paper rounded-[28px] p-5 shadow-soft">
-          <p class="text-xs tracking-[0.22em] text-maple font-semibold">FOOD GUIDE</p>
-          <h2 class="font-serifjp text-2xl mt-2">旅途中吃什麼</h2>
-          <p class="text-sm leading-7 text-black/60 mt-3">依照每天行程動線整理的熱門餐廳與網友常點餐點。實際營業時間、售完與候位狀況仍以當天店家公告為準。</p>
-        </div>
-
-        <div id="foodCards" class="space-y-4"></div>
-      </section>
-
       <!-- WALLET -->
       <section id="wallet" class="app-section space-y-4">
         <div class="bg-paper rounded-[28px] p-5 shadow-soft">
@@ -512,68 +501,51 @@
     <!-- HOTEL DETAIL MODAL -->
     <div id="hotelModal" class="fixed inset-0 z-[80] hidden">
       <div class="absolute inset-0 bg-black/45 backdrop-blur-[2px]" onclick="closeHotelModal()"></div>
-
       <div class="absolute inset-x-0 bottom-0 max-h-[88vh] overflow-y-auto rounded-t-[30px] bg-paper shadow-2xl">
         <div class="sticky top-0 z-10 bg-paper/95 backdrop-blur border-b border-black/5 px-5 py-4 flex items-center justify-between">
-          <div>
-            <p class="text-[10px] tracking-[0.18em] text-maple font-semibold">STAY</p>
-            <h2 id="hotelModalTitle" class="font-serifjp text-xl mt-1">住宿資訊</h2>
-          </div>
-          <button onclick="closeHotelModal()" class="w-10 h-10 rounded-full bg-cream grid place-items-center text-black/45" aria-label="關閉">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
+          <div><p class="text-[10px] tracking-[0.18em] text-maple font-semibold">STAY</p><h2 id="hotelModalTitle" class="font-serifjp text-xl mt-1">住宿資訊</h2></div>
+          <button onclick="closeHotelModal()" class="w-10 h-10 rounded-full bg-cream grid place-items-center text-black/45"><i class="fa-solid fa-xmark"></i></button>
         </div>
-
         <div class="p-5 space-y-4">
           <div id="hotelRoomPhotoWrap" class="rounded-[22px] overflow-hidden bg-cream min-h-[155px] grid place-items-center">
-            <div class="text-center text-black/30 py-8">
-              <i class="fa-regular fa-image text-3xl"></i>
-              <p class="text-xs mt-2">房型照片稍後補上</p>
-            </div>
+            <div class="text-center text-black/30 py-8"><i class="fa-regular fa-image text-3xl"></i><p class="text-xs mt-2">房型照片稍後補上</p></div>
           </div>
-
           <div class="rounded-[22px] border border-sand/50 overflow-hidden bg-white">
-            <div class="p-4 border-b border-black/5">
-              <p class="text-[10px] tracking-[0.16em] text-black/35">RESERVATION</p>
-              <p class="text-xs text-black/45 mt-2">訂房代號</p>
-              <div id="hotelModalBooking" class="font-semibold mt-1 break-all">—</div>
-            </div>
-
-            <a id="hotelModalPhone" href="#" class="p-4 border-b border-black/5 flex items-center justify-between gap-3">
-              <div>
-                <p class="text-[10px] tracking-[0.16em] text-black/35">CAR GPS PHONE</p>
-                <p id="hotelModalPhoneText" class="font-semibold mt-1">—</p>
-              </div>
-              <span class="w-10 h-10 rounded-full bg-ink text-white grid place-items-center">
-                <i class="fa-solid fa-phone"></i>
-              </span>
-            </a>
-
-            <div class="p-4">
-              <p class="text-[10px] tracking-[0.16em] text-black/35">ADDRESS</p>
-              <p id="hotelModalAddress" class="text-sm leading-6 mt-1">—</p>
-            </div>
+            <div class="p-4 border-b border-black/5"><p class="text-[10px] tracking-[0.16em] text-black/35">RESERVATION</p><p class="text-xs text-black/45 mt-2">訂房代號</p><div id="hotelModalBooking" class="font-semibold mt-1 break-all">—</div></div>
+            <a id="hotelModalPhone" href="#" class="p-4 border-b border-black/5 flex items-center justify-between gap-3"><div><p class="text-[10px] tracking-[0.16em] text-black/35">CAR GPS PHONE</p><p id="hotelModalPhoneText" class="font-semibold mt-1">—</p></div><span class="w-10 h-10 rounded-full bg-ink text-white grid place-items-center"><i class="fa-solid fa-phone"></i></span></a>
+            <div class="p-4"><p class="text-[10px] tracking-[0.16em] text-black/35">ADDRESS</p><p id="hotelModalAddress" class="text-sm leading-6 mt-1">—</p></div>
           </div>
+          <a id="hotelModalMap" target="_blank" href="#" class="w-full rounded-2xl bg-ink text-white py-4 flex items-center justify-center gap-2 font-semibold"><i class="fa-solid fa-location-arrow"></i>Google Maps 導航</a>
+        </div>
+      </div>
+    </div>
 
-          <a id="hotelModalMap" target="_blank" href="#" class="w-full rounded-2xl bg-ink text-white py-4 flex items-center justify-center gap-2 font-semibold">
-            <i class="fa-solid fa-location-arrow"></i>
-            Google Maps 導航
-          </a>
+    <!-- FOOD DETAIL MODAL -->
+    <div id="foodModal" class="fixed inset-0 z-[85] hidden">
+      <div class="absolute inset-0 bg-black/45 backdrop-blur-[2px]" onclick="closeFoodModal()"></div>
+      <div class="absolute inset-x-0 bottom-0 max-h-[90vh] overflow-y-auto rounded-t-[30px] bg-paper shadow-2xl">
+        <div class="sticky top-0 z-10 bg-paper/95 backdrop-blur border-b border-black/5 px-5 py-4 flex items-center justify-between">
+          <div><p class="text-[10px] tracking-[0.18em] text-maple font-semibold">FOOD</p><h2 id="foodModalTitle" class="font-serifjp text-xl mt-1">美食推薦</h2></div>
+          <button onclick="closeFoodModal()" class="w-10 h-10 rounded-full bg-cream grid place-items-center text-black/45"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="p-5 space-y-4">
+          <div id="foodModalPhotoWrap" class="rounded-[22px] overflow-hidden bg-cream min-h-[170px] grid place-items-center"></div>
+          <div><div class="flex items-center gap-2 flex-wrap"><span id="foodModalDay" class="px-2.5 py-1 rounded-full bg-maple text-white text-[10px] font-bold"></span><span id="foodModalMeal" class="px-2.5 py-1 rounded-full bg-cream text-black/50 text-[10px] font-semibold"></span></div><p id="foodModalArea" class="text-xs text-black/40 mt-3"></p><p id="foodModalIntro" class="text-sm leading-7 text-black/65 mt-3"></p></div>
+          <div class="rounded-[22px] border border-sand/50 overflow-hidden bg-white"><div class="p-4 border-b border-black/5"><p class="text-[10px] tracking-[0.16em] text-maple font-bold">RECOMMENDED</p><p class="font-serifjp text-lg mt-1">推薦餐點</p></div><div id="foodModalPicks" class="p-4 space-y-2"></div></div>
+          <div class="rounded-2xl bg-mist p-4"><p class="text-xs font-bold text-moss"><i class="fa-solid fa-circle-info mr-2"></i>用餐提醒</p><p id="foodModalTip" class="text-xs leading-6 text-black/60 mt-1"></p></div>
+          <div class="flex justify-center"><a id="foodModalMap" target="_blank" href="#" class="px-6 py-3 rounded-2xl bg-ink text-white text-xs font-semibold"><i class="fa-solid fa-location-dot mr-2"></i>Google Maps</a></div>
         </div>
       </div>
     </div>
 
     <!-- BOTTOM NAV -->
     <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 max-w-md w-full z-40 glass border-t border-white/70 nav-bottom">
-      <div class="grid grid-cols-6 px-1 py-2">
+      <div class="grid grid-cols-5 px-1 py-2">
         <button class="tab-btn active flex flex-col items-center gap-1 text-[10px]" data-target="plan" data-title="旅程總覽">
           <span class="tab-icon w-10 h-8 rounded-2xl grid place-items-center"><i class="fa-solid fa-route"></i></span><span>PLAN</span>
         </button>
         <button class="tab-btn flex flex-col items-center gap-1 text-[10px] text-black/45" data-target="guide" data-title="深度導覽">
           <span class="tab-icon w-10 h-8 rounded-2xl grid place-items-center"><i class="fa-solid fa-book-open"></i></span><span>GUIDE</span>
-        </button>
-        <button class="tab-btn flex flex-col items-center gap-1 text-[10px] text-black/45" data-target="food" data-title="美食推薦">
-          <span class="tab-icon w-10 h-8 rounded-2xl grid place-items-center"><i class="fa-solid fa-utensils"></i></span><span>FOOD</span>
         </button>
         <button class="tab-btn flex flex-col items-center gap-1 text-[10px] text-black/45" data-target="wallet" data-title="旅費錢包">
           <span class="tab-icon w-10 h-8 rounded-2xl grid place-items-center"><i class="fa-solid fa-wallet"></i></span><span>WALLET</span>
@@ -605,7 +577,7 @@
         {time:'上午', text:'那須動物王國', map:'那須動物王國', food:true, guideRef:'nasu-kingdom'},
         {time:'午餐', text:'園區內解決'},
         {time:'下午', text:'平成之森', map:'那須平成之森', guideRef:'heisei-forest'},
-        {time:'備選', text:'那須纜車／殺生石／那須溫泉神社', map:'殺生石 那須溫泉神社', note:'依天氣、體力與時間彈性調整', guideRef:'nasu-yumoto'}
+        {time:'備選', text:'那須纜車／殺生石／那須溫泉神社', map:'殺生石 那須溫泉神社', note:'依天氣與時間彈性調整', guideRef:'nasu-yumoto'}
       ]
     },
     {
@@ -647,13 +619,13 @@
       ]
     },
     {
-      day:'D7', date:'11/20', title:'御殿場 → 成田', hotel:'成田國際花園酒店（暫定）', booking:['5123731738'], hotelPhone:'0476-23-5522', hotelAddress:'〒286-0133 千葉県成田市吉倉241-1', hotelMap:'インターナショナルガーデンホテル成田',
+      day:'D7', date:'11/20', title:'御殿場 → 成田', hotel:'成田國際花園酒店', booking:['5123731738'], hotelPhone:'0476-23-5522', hotelAddress:'〒286-0133 千葉県成田市吉倉241-1', hotelMap:'インターナショナルガーデンホテル成田',
       items:[
         {time:'上午', text:'御殿場 Premium Outlets', map:'御殿場プレミアム アウトレット'},
         {time:'午餐', text:'Outlet 內用餐', food:true, foodRef:'D7-0'},
         {time:'下午', text:'御殿場 → 成田', note:'車程約 2.5 小時', important:true},
         {time:'晚上', text:'飯店晚餐或成田市用餐', map:'成田駅 レストラン'},
-        {time:'晚上', text:'暫定飯店還車／確認隔日接駁'}
+        {time:'晚上', text:'飯店還車／確認隔日接駁'}
       ]
     },
     {
@@ -672,7 +644,7 @@
     {
       id:'nasu-kingdom', day:'D2', date:'11/15', title:'那須動物王國', area:'那須高原', photoDate:'2026-11-15', map:'那須動物王國',
       intro:'那須動物王國位在那須高原，特色不是傳統「一格一格看動物」的動物園，而是把高原環境、近距離展示與動物表演結合在一起。園區範圍很大，王國城鎮與王國農場之間移動需要抓時間。',
-      story:'那須高原本身就是關東北部著名的避暑與度假地，海拔與氣候讓這裡適合發展牧場與戶外型動物設施。帶長輩同行時，不用追求把全園走完，優先看最想看的動物與表演，體力會舒服很多。',
+      story:'那須高原本身就是關東北部著名的避暑與度假地，海拔與氣候讓這裡適合發展牧場與戶外型動物設施。園區範圍很大，不用追求一次走完全園，優先看最想看的動物與表演即可。',
       points:['先確認當天表演時間，再決定參觀順序','高原風大、11 月體感溫度可能比宇都宮低很多','園區午餐直接解決，可減少移動'],
       talk:'「這裡和一般都市動物園不太一樣，它是把動物園直接放進那須高原的大自然裡。因為場地很大，所以很多動物的活動空間也比較開闊。我們今天不用全部走完，挑最想看的幾個區域慢慢逛就好。」',
       elder:'園區大、戶外區多。帶牧牧建議不要追求全園走完，先看表演時間再排動線；11 月高原風大，嬰幼兒保暖衣物要方便穿脫。自駕停車後仍會有不少步行距離。'
@@ -681,7 +653,7 @@
       id:'heisei-forest', day:'D2', date:'11/15', title:'那須平成之森', area:'那須高原', photoDate:'2026-11-15', map:'那須平成之森',
       intro:'那須平成之森原本是那須御用邸用地的一部分，後來將大片森林開放給一般民眾。整片區域保留自然林與野生動物棲地，和人工打造的公園感很不一樣。',
       story:'這片森林約有 560 公頃，核心價值是「保留自然原貌」。因此來這裡不是看華麗造景，而是看山毛櫸林、季節變化與安靜的森林環境。',
-      points:['森林步道適合慢慢走，不需要追求走完全程','秋季可觀察落葉林色彩與林相變化','天候差或長輩累了，可縮短停留時間'],
+      points:['森林步道適合慢慢走，不需要追求走完全程','秋季可觀察落葉林色彩與林相變化','天候不佳時可縮短停留時間'],
       talk:'「平成之森以前是皇室御用邸周邊的森林，後來才開放給大家。這裡最珍貴的地方不是人工景觀，而是原本的森林被好好保存下來，所以走進去會覺得很安靜、很自然。」',
       elder:'森林步道可能有落葉、泥濘與高低差，推車不一定適合所有路段；帶牧牧可依現場路況改用揹巾。下午天色變早，不建議太晚才進森林。'
     },
@@ -689,7 +661,7 @@
       id:'nasu-yumoto', day:'D2', date:'11/15', title:'殺生石・那須溫泉神社・那須岳', area:'那須湯本', photoDate:'2026-11-15', map:'殺生石 那須温泉神社',
       intro:'這一帶最能看出那須是火山溫泉地。殺生石周邊有強烈硫磺氣味與荒涼岩地，和旁邊的溫泉神社形成非常有故事性的組合。',
       story:'殺生石最著名的是九尾狐傳說：傳說妖狐化為毒石，危害靠近的人畜，因此得名。那須溫泉神社則和當地溫泉起源傳說有關，據說古時獵人追鹿入山，發現受傷的鹿以溫泉療傷，因而知道此地有溫泉。',
-      points:['殺生石看火山地形與九尾狐傳說','溫泉神社看那須溫泉文化','纜車是否搭乘以天候、風勢與體力為優先'],
+      points:['殺生石看火山地形與九尾狐傳說','溫泉神社看那須溫泉文化','纜車是否搭乘以天候與風勢為優先'],
       talk:'「這裡聞得到很明顯的硫磺味，代表我們其實就在火山溫泉地帶。殺生石又有日本很有名的九尾狐傳說，所以這裡同時有自然地質和神話故事。旁邊的溫泉神社，則是在講那須人怎麼發現溫泉、感謝溫泉的歷史。」',
       elder:'殺生石周邊硫磺味明顯，不建議讓牧牧久留在氣味重的位置。那須湯本往山區道路有坡度與彎道，11 月低溫時清晨、陰影處要特別留意結冰。'
     },
@@ -761,7 +733,7 @@
       id:'toshogu', day:'D5', date:'11/18', title:'日光東照宮', area:'日光', photoDate:'2026-11-17', map:'日光東照宮',
       intro:'日光東照宮祭祀江戶幕府初代將軍德川家康。和日本常見的素雅神社相比，這裡大量使用金箔、彩色雕刻與精細裝飾，是江戶初期權力與工藝的代表。',
       story:'德川家康過世後被神格化，東照宮成為德川政權的重要象徵。著名的「三猿」——不看、不聽、不說——以及「眠貓」，都不是隨意裝飾，而是把人生觀與寓意藏進建築雕刻裡。',
-      points:['陽明門先看整體，再找細部雕刻','三猿與眠貓是最容易跟長輩分享的故事','石階與人潮多，步伐放慢'],
+      points:['陽明門先看整體，再找細部雕刻','三猿與眠貓是最容易理解的代表故事','石階與人潮多，步伐放慢'],
       talk:'「東照宮供奉的是德川家康，也就是建立江戶幕府的人。這裡故意蓋得非常華麗，代表德川家的權威。等一下可以特別找三隻猴子——不看、不聽、不說——還有很有名的眠貓，這些雕刻其實都在講人生道理。」',
       elder:'境內石階、人潮都多，推車未必每一區都方便，可準備揹巾。早上從奧日光下山會走第一いろは坂，為單向下坡連續彎道，控制車速、使用引擎煞車，不要長時間踩住煞車。'
     },
@@ -1031,17 +1003,15 @@
                 </div>
                 ${(i.map || i.foodRef || i.guideRef) ? `<div class="flex gap-2 mt-3 flex-wrap">
                   ${i.map ? `<a target="_blank" href="${mapLink(i.map)}" class="px-3 py-1.5 rounded-full bg-white text-moss text-[11px] font-semibold"><i class="fa-solid fa-location-dot mr-1"></i>Google Maps</a>` : ''}
-                  ${i.foodRef ? `<button onclick="goToFood('${i.foodRef}')" class="px-3 py-1.5 rounded-full bg-maple text-white text-[11px] font-semibold"><i class="fa-solid fa-utensils mr-1"></i>美食推薦</button>` : ''}
+                  ${i.foodRef ? `<button onclick="openFoodModal('${i.foodRef}')" class="px-3 py-1.5 rounded-full bg-maple text-white text-[11px] font-semibold"><i class="fa-solid fa-utensils mr-1"></i>美食推薦</button>` : ''}
                   ${i.guideRef ? `<button onclick="goToGuide('${i.guideRef}')" class="px-3 py-1.5 rounded-full bg-moss text-white text-[11px] font-semibold"><i class="fa-solid fa-book-open mr-1"></i>景點導覽</button>` : ''}
                 </div>`:''}
               </div>
             </div>`).join('')}
         </div>
-        <button onclick="openHotelModal('${d.day}')" class="mt-4 w-full p-3.5 rounded-2xl bg-mist/70 text-sm flex items-center gap-3 text-left">
-          <i class="fa-solid fa-bed text-moss"></i>
-          <span class="flex-1"><b>住宿：</b>${d.hotel}</span>
-          <span class="text-[10px] text-moss font-semibold whitespace-nowrap">查看資訊 <i class="fa-solid fa-chevron-right ml-1"></i></span>
-        </button>
+        ${d.day !== 'D8' ? `<button onclick="openHotelModal('${d.day}')" class="mt-4 w-full p-3.5 rounded-2xl bg-mist/70 text-sm flex items-center gap-3 text-left">
+          <i class="fa-solid fa-bed text-moss"></i><span class="flex-1"><b>住宿：</b>${d.hotel}</span><span class="text-[10px] text-moss font-semibold whitespace-nowrap">查看資訊 <i class="fa-solid fa-chevron-right ml-1"></i></span>
+        </button>` : ''}
       </article>`;
     }).join('');
   }
@@ -1049,23 +1019,36 @@
 
   function openHotelModal(day){
     const d=tripDays.find(x=>x.day===day);
-    if(!d) return;
-
+    if(!d || d.day==='D8') return;
     $('#hotelModalTitle').textContent=d.hotel;
     $('#hotelModalBooking').textContent=d.booking?.length ? d.booking.join(' ／ ') : '尚未提供';
     $('#hotelModalPhoneText').textContent=d.hotelPhone || '—';
     $('#hotelModalPhone').href=d.hotelPhone ? `tel:${d.hotelPhone.replace(/[^0-9+]/g,'')}` : '#';
     $('#hotelModalAddress').textContent=d.hotelAddress || '—';
     $('#hotelModalMap').href=mapLink(d.hotelMap || d.hotel);
-
     $('#hotelModal').classList.remove('hidden');
     document.body.style.overflow='hidden';
   }
+  function closeHotelModal(){ $('#hotelModal')?.classList.add('hidden'); document.body.style.overflow=''; }
 
-  function closeHotelModal(){
-    $('#hotelModal')?.classList.add('hidden');
-    document.body.style.overflow='';
+  function openFoodModal(ref){
+    const [day,idxRaw]=String(ref).split('-');
+    const matches=foodGuide.filter(f=>f.day===day);
+    const f=matches[Number(idxRaw||0)] || matches[0];
+    if(!f) return;
+    $('#foodModalTitle').textContent=f.name;
+    $('#foodModalDay').textContent=`${f.day}・${f.date}`;
+    $('#foodModalMeal').textContent=f.meal || '';
+    $('#foodModalArea').innerHTML=`<i class="fa-solid fa-location-dot mr-1"></i>${f.area || ''}`;
+    $('#foodModalIntro').textContent=f.intro || '';
+    $('#foodModalTip').textContent=f.tip || '';
+    $('#foodModalMap').href=mapLink(f.map || f.name);
+    $('#foodModalPhotoWrap').innerHTML=f.photo ? `<img src="${f.photo}" alt="${f.name}" class="w-full h-[190px] object-cover" loading="lazy" decoding="async">` : '';
+    $('#foodModalPicks').innerHTML=(f.picks||[]).map(p=>`<div class="rounded-2xl bg-cream px-4 py-3"><p class="font-semibold text-sm">${p[0]}</p><p class="text-xs text-black/50 leading-5 mt-1">${p[1]}</p></div>`).join('');
+    $('#foodModal').classList.remove('hidden');
+    document.body.style.overflow='hidden';
   }
+  function closeFoodModal(){ $('#foodModal')?.classList.add('hidden'); document.body.style.overflow=''; }
 
   function renderGuide(){
     const box=$('#guideCards');
@@ -1180,59 +1163,6 @@
     },80);
   }
 
-  function goToFood(ref){
-    const foodTab = document.querySelector('.tab-btn[data-target="food"]');
-    if(foodTab){
-      $$('.tab-btn').forEach(b=>b.classList.remove('active'));
-      foodTab.classList.add('active');
-    }
-    $$('.app-section').forEach(sec=>sec.classList.remove('active'));
-    $('#food').classList.add('active');
-    $('#pageTitle').textContent='美食推薦';
-    initPageOnDemand('food');
-    setTimeout(()=>{
-      const target=document.getElementById('food-'+ref);
-      if(target){
-        target.scrollIntoView({behavior:'smooth', block:'start'});
-        target.classList.add('ring-2','ring-maple/40');
-        setTimeout(()=>target.classList.remove('ring-2','ring-maple/40'),1600);
-      }
-    },80);
-  }
-
-  // LAZY PAGE INIT：只在第一次打開該分頁時載入較重的內容
-  const lazyPageLoaded = {guide:false, food:false, wallet:false, lists:false, info:false};
-
-  function initPageOnDemand(target){
-    if(lazyPageLoaded[target]) return;
-    lazyPageLoaded[target] = true;
-
-    if(target==='guide'){
-      // 讓瀏覽器先完成分頁切換，再建立大量導覽卡片
-      requestAnimationFrame(()=>renderGuide());
-    }
-
-    if(target==='food'){
-      requestAnimationFrame(()=>renderFood());
-    }
-
-    if(target==='wallet'){
-      startSharedWallet();
-      renderExpenses();
-    }
-
-    if(target==='lists'){
-      renderChecklist();
-      renderMemos();
-    }
-
-    if(target==='info'){
-      requestAnimationFrame(()=>{
-        renderWeatherDateTabs();
-        fetchWeather(currentWeatherRegion);
-      });
-    }
-  }
 
   // NAVIGATION
   $$('.tab-btn').forEach(btn => btn.addEventListener('click', () => {
