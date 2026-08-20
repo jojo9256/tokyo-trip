@@ -92,7 +92,27 @@
     .startup-title { font-family:'Shippori Mincho',serif; font-size:20px; }
     .startup-sub { margin-top:6px; font-size:10px; letter-spacing:.18em; color:rgba(47,51,47,.42); }
 
-  </style>
+  
+  #planDayTabs{
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior-x:contain;
+  }
+  #planDayTabs::-webkit-scrollbar{display:none;}
+
+
+  #planDayTabs{
+    cursor:grab;
+    user-select:none;
+    touch-action:pan-x;
+  }
+  #planDayTabs.dragging{
+    cursor:grabbing;
+    scroll-behavior:auto;
+  }
+
+</style>
 
   <!-- Firebase：四人共用記帳 -->
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
@@ -255,7 +275,72 @@
           </div>
         </div>
 
-        <div id="dayCards" class="space-y-4"></div>
+        <div class="bg-paper rounded-[28px] overflow-hidden shadow-soft">
+          <div class="px-5 pt-5 pb-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-[10px] tracking-[0.24em] text-black/35 font-semibold">LOCAL WEATHER</p>
+                <h2 class="font-serifjp text-xl mt-1">旅程即時天氣</h2>
+              </div>
+              <button id="refreshWeatherBtn" class="w-10 h-10 rounded-full bg-cream text-moss grid place-items-center" aria-label="更新天氣">
+                <i class="fa-solid fa-rotate"></i>
+              </button>
+            </div>
+
+            <div id="weatherDateTabs" class="flex gap-5 overflow-x-auto hide-scrollbar mt-5 pb-1"></div>
+          </div>
+
+          <div class="px-5 py-4">
+            <div class="flex items-end justify-between gap-3">
+              <div>
+                <p id="weatherCity" class="font-serifjp text-2xl">栃木縣</p>
+                <p id="weatherUpdated" class="text-[10px] text-black/35 mt-1">正在取得最新天氣...</p>
+              </div>
+              <div class="text-right">
+                <p class="font-serifjp text-lg text-black/70">當地即時天氣資訊</p>
+                <p class="text-[10px] text-black/35 mt-1">JMA + hourly forecast</p>
+              </div>
+            </div>
+
+            <div id="weatherSummary" class="mt-3 rounded-2xl bg-cream p-3"></div>
+
+            <div class="mt-3">
+              <div class="flex items-center justify-between">
+                <p class="text-[11px] tracking-[0.18em] text-maple font-semibold">HOURLY</p>
+                <span class="text-[10px] text-black/35">左右滑動查看更多</span>
+              </div>
+              <div id="hourlyWeather" class="flex gap-4 overflow-x-auto hide-scrollbar mt-2 pb-1"></div>
+            </div>
+
+            <div class="flex gap-2 overflow-x-auto hide-scrollbar mt-3 pb-1" id="weatherRegionTabs">
+              <button class="weather-region px-3 py-2 rounded-full bg-ink text-white text-xs whitespace-nowrap" data-region="tochigi">栃木</button>
+              <button class="weather-region px-3 py-2 rounded-full bg-cream text-black/55 text-xs whitespace-nowrap" data-region="yamanashi">河口湖</button>
+              <button class="weather-region px-3 py-2 rounded-full bg-cream text-black/55 text-xs whitespace-nowrap" data-region="shizuoka">御殿場</button>
+              <button class="weather-region px-3 py-2 rounded-full bg-cream text-black/55 text-xs whitespace-nowrap" data-region="chiba">成田</button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 mt-2">
+              <a target="_blank" href="https://www.jma.go.jp/bosai/forecast/" class="rounded-xl bg-mist px-3 py-2.5">
+                <i class="fa-solid fa-cloud-sun text-moss"></i>
+                <p class="text-sm font-semibold mt-1.5">日本氣象廳</p>
+                <p class="text-[10px] text-black/45 mt-0.5">官方詳細預報・警報</p>
+              </a>
+              <a target="_blank" href="https://www.jartic.or.jp/" class="rounded-xl bg-[#F8E9E1] px-3 py-2.5">
+                <i class="fa-solid fa-road text-maple"></i>
+                <p class="text-sm font-semibold mt-1.5">JARTIC</p>
+                <p class="text-[10px] text-black/45 mt-0.5">日本道路交通資訊</p>
+              </a>
+            </div>
+
+            <p class="text-[9px] leading-4 text-black/35 mt-2">※ 日本氣象廳提供官方預報；逐時溫度與天氣圖示採公開氣象資料補充。需網路連線。</p>
+          </div>
+        </div>
+
+
+        <div class="mt-4">
+          <div id="planDayTabs" class="flex overflow-x-auto hide-scrollbar border-b border-black/5 px-1 scroll-smooth"></div>
+          <div id="dayCards" class="mt-4"></div>
+        </div>
       </section>
 
       <!-- GUIDE -->
@@ -386,77 +471,6 @@
 
       <!-- INFO -->
       <section id="info" class="app-section space-y-4">
-        <div class="bg-paper rounded-[28px] overflow-hidden shadow-soft">
-          <div class="px-5 pt-5 pb-4">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-[10px] tracking-[0.24em] text-black/35 font-semibold">LOCAL WEATHER</p>
-                <h2 class="font-serifjp text-xl mt-1">旅程即時天氣</h2>
-              </div>
-              <button id="refreshWeatherBtn" class="w-10 h-10 rounded-full bg-cream text-moss grid place-items-center" aria-label="更新天氣">
-                <i class="fa-solid fa-rotate"></i>
-              </button>
-            </div>
-
-            <div id="weatherDateTabs" class="flex gap-5 overflow-x-auto hide-scrollbar mt-5 pb-1"></div>
-          </div>
-
-          <div id="weatherHero" class="relative h-44 bg-[#B7C2B7] overflow-hidden">
-            <img id="weatherHeroPhoto" src="" alt="" class="absolute inset-0 w-full h-full object-cover">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-black/45 to-transparent"></div>
-            <div class="absolute left-5 bottom-4 text-white">
-              <p id="weatherDayLabel" class="text-[10px] tracking-[0.18em] opacity-80">TODAY</p>
-              <h3 id="weatherPlaceTitle" class="font-serifjp text-2xl mt-1">栃木・日光</h3>
-            </div>
-          </div>
-
-          <div class="px-5 py-5">
-            <div class="flex items-end justify-between gap-3">
-              <div>
-                <p id="weatherCity" class="font-serifjp text-2xl">栃木縣</p>
-                <p id="weatherUpdated" class="text-[10px] text-black/35 mt-1">正在取得最新天氣...</p>
-              </div>
-              <div class="text-right">
-                <p class="font-serifjp text-lg text-black/70">當地即時天氣資訊</p>
-                <p class="text-[10px] text-black/35 mt-1">JMA + hourly forecast</p>
-              </div>
-            </div>
-
-            <div id="weatherSummary" class="mt-4 rounded-2xl bg-cream p-4"></div>
-
-            <div class="mt-5">
-              <div class="flex items-center justify-between">
-                <p class="text-xs tracking-[0.18em] text-maple font-semibold">HOURLY</p>
-                <span class="text-[10px] text-black/35">左右滑動查看更多</span>
-              </div>
-              <div id="hourlyWeather" class="flex gap-5 overflow-x-auto hide-scrollbar mt-4 pb-2"></div>
-            </div>
-
-            <div class="flex gap-2 overflow-x-auto hide-scrollbar mt-5 pb-1" id="weatherRegionTabs">
-              <button class="weather-region px-3 py-2 rounded-full bg-ink text-white text-xs whitespace-nowrap" data-region="tochigi">栃木</button>
-              <button class="weather-region px-3 py-2 rounded-full bg-cream text-black/55 text-xs whitespace-nowrap" data-region="yamanashi">河口湖</button>
-              <button class="weather-region px-3 py-2 rounded-full bg-cream text-black/55 text-xs whitespace-nowrap" data-region="shizuoka">御殿場</button>
-              <button class="weather-region px-3 py-2 rounded-full bg-cream text-black/55 text-xs whitespace-nowrap" data-region="chiba">成田</button>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3 mt-4">
-              <a target="_blank" href="https://www.jma.go.jp/bosai/forecast/" class="rounded-2xl bg-mist p-4">
-                <i class="fa-solid fa-cloud-sun text-moss"></i>
-                <p class="font-semibold mt-2">日本氣象廳</p>
-                <p class="text-xs text-black/45 mt-1">官方詳細預報・警報</p>
-              </a>
-              <a target="_blank" href="https://www.jartic.or.jp/" class="rounded-2xl bg-[#F8E9E1] p-4">
-                <i class="fa-solid fa-road text-maple"></i>
-                <p class="font-semibold mt-2">JARTIC</p>
-                <p class="text-xs text-black/45 mt-1">日本道路交通資訊</p>
-              </a>
-            </div>
-
-            <p class="text-[10px] leading-5 text-black/35 mt-3">※ 日本氣象廳提供官方預報；逐時溫度與天氣圖示採公開氣象資料補充。需網路連線。</p>
-          </div>
-        </div>
-
         <div class="bg-paper rounded-[28px] p-5 shadow-soft">
           <p class="text-xs tracking-[0.2em] text-maple font-semibold">EMERGENCY</p>
           <h2 class="font-serifjp text-xl mt-1">緊急聯絡</h2>
@@ -971,17 +985,40 @@
     return [...tripDays.slice(idx), ...tripDays.slice(0,idx)];
   }
 
+  let activePlanDay = sessionStorage.getItem('activePlanDay') || 'D1';
+
   function renderDays(){
     const japanToday=getJapanTodayKey();
     const inTrip=japanToday>='2026-11-14' && japanToday<='2026-11-21';
     const orderedDays=getOrderedTripDays();
 
-    $('#dayCards').innerHTML = orderedDays.map(d => {
-      const dayKey=getTripDayKey(d);
-      const isToday=inTrip && dayKey===japanToday;
-      const isPast=inTrip && dayKey<japanToday;
+    // 旅行期間自動以「今天」為預設；其他時間保留使用者最後查看的日期。
+    if(inTrip && !sessionStorage.getItem('activePlanDay')){
+      const todayDay=tripDays.find(d=>getTripDayKey(d)===japanToday);
+      if(todayDay) activePlanDay=todayDay.day;
+    }
+    if(!tripDays.some(d=>d.day===activePlanDay)) activePlanDay='D1';
+
+    $('#planDayTabs').innerHTML = tripDays.map(d=>{
+      const active=d.day===activePlanDay;
+      const isToday=inTrip && getTripDayKey(d)===japanToday;
+      const weekday=['SUN','MON','TUE','WED','THU','FRI','SAT'][new Date(`${getTripDayKey(d)}T12:00:00`).getDay()];
       return `
-      <article class="bg-paper rounded-[28px] p-5 shadow-soft ${isToday ? 'ring-2 ring-maple/40' : ''} ${isPast ? 'opacity-[0.72]' : ''}">
+        <button type="button" onclick="selectPlanDay('${d.day}')" data-plan-tab="${d.day}"
+          class="relative z-10 shrink-0 min-w-[72px] px-3 py-3 text-center border-b-2 transition-colors ${active ? 'border-maple text-ink' : 'border-transparent text-black/30'}">
+          <p class="text-[10px] font-bold tracking-[0.08em]">${weekday}</p>
+          <p class="font-serifjp text-xl leading-none mt-1">${d.date.split('/')[1]}</p>
+          ${isToday ? '<span class="inline-block w-1.5 h-1.5 rounded-full bg-maple mt-1"></span>' : '<span class="inline-block h-1.5 mt-1"></span>'}
+        </button>`;
+    }).join('');
+
+    const d=tripDays.find(x=>x.day===activePlanDay) || orderedDays[0];
+    const dayKey=getTripDayKey(d);
+    const isToday=inTrip && dayKey===japanToday;
+    const isPast=inTrip && dayKey<japanToday;
+
+    $('#dayCards').innerHTML = `
+      <article id="planDayDetail" class="bg-paper rounded-[28px] p-5 shadow-soft ${isToday ? 'ring-2 ring-maple/40' : ''} ${isPast ? 'opacity-[0.72]' : ''}">
         <div class="flex items-start justify-between gap-3">
           <div>
             <div class="flex items-center gap-2 flex-wrap">
@@ -992,7 +1029,7 @@
             </div>
             <h3 class="font-serifjp text-xl mt-2">${d.title}</h3>
           </div>
-          <button onclick="window.open('${mapLink(d.title)}','_blank')" class="w-10 h-10 rounded-2xl bg-cream text-moss"><i class="fa-solid fa-map-location-dot"></i></button>
+
         </div>
         <div class="timeline relative mt-5 pl-10 space-y-4">
           ${d.items.map(i => `
@@ -1017,7 +1054,49 @@
           <i class="fa-solid fa-bed text-moss"></i><span class="flex-1"><b>住宿：</b>${d.hotel}</span><span class="text-[10px] text-moss font-semibold whitespace-nowrap">查看資訊 <i class="fa-solid fa-chevron-right ml-1"></i></span>
         </button>` : ''}
       </article>`;
-    }).join('');
+
+    requestAnimationFrame(()=>{
+      const active=$(`[data-plan-tab="${activePlanDay}"]`);
+      if(active) active.scrollIntoView({behavior:'auto', block:'nearest', inline:'center'});
+    });
+  }
+
+  // PLAN 日期橫列：手機用原生手指滑動；桌機只在空白處按住拖曳
+  (() => {
+    let mouseDragging=false, startX=0, startScroll=0;
+
+    document.addEventListener('mousedown', e=>{
+      const el=e.target.closest('#planDayTabs');
+      if(!el) return;
+
+      // 點到日期按鈕時完全不要啟動拖曳，確保 onclick 正常。
+      if(e.target.closest('button')) return;
+
+      mouseDragging=true;
+      startX=e.clientX;
+      startScroll=el.scrollLeft;
+      el.classList.add('dragging');
+      e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', e=>{
+      if(!mouseDragging) return;
+      const el=document.getElementById('planDayTabs');
+      if(!el) return;
+      el.scrollLeft=startScroll-(e.clientX-startX);
+    });
+
+    document.addEventListener('mouseup', ()=>{
+      if(!mouseDragging) return;
+      document.getElementById('planDayTabs')?.classList.remove('dragging');
+      mouseDragging=false;
+    });
+  })();
+
+  function selectPlanDay(day){
+    activePlanDay=day;
+    sessionStorage.setItem('activePlanDay',day);
+    renderDays();
   }
 
 
@@ -1314,11 +1393,7 @@
     }
 
     if(target === 'info'){
-      if(!lazyPageLoaded.info){
-        renderWeatherDateTabs();
-        fetchWeather(currentWeatherRegion);
-        lazyPageLoaded.info = true;
-      }
+      lazyPageLoaded.info = true;
     }
   }
 
@@ -1859,7 +1934,7 @@
   function escapeHTML(s){ return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
   function escapeAttr(s){ return String(s).replace(/"/g,'&quot;'); }
 
-  renderDays(); renderGuide(); renderPayerButtons(); initChecklist(); renderChecklist(); renderMemos(); renderExpenses(); updateWeatherTabUI(); renderWeatherDateTabs();
+  renderDays(); renderGuide(); renderPayerButtons(); initChecklist(); renderChecklist(); renderMemos(); renderExpenses(); updateWeatherTabUI(); renderWeatherDateTabs(); fetchWeather(currentWeatherRegion);
 
   // Fast startup screen
   requestAnimationFrame(() => {
