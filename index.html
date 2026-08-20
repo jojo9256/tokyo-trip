@@ -153,16 +153,23 @@
 
         <!-- FLIGHT INFO -->
         <div class="bg-paper rounded-[28px] p-5 shadow-soft">
-          <div class="flex items-center justify-between gap-3">
+          <button type="button" onclick="toggleFlightInfo()" class="w-full flex items-center justify-between gap-3 text-left" aria-expanded="false" id="flightToggle">
             <div>
               <p class="text-xs tracking-[0.2em] text-maple font-semibold">FLIGHT INFO</p>
               <h2 class="font-serifjp text-xl mt-1">航班資訊</h2>
+              <p class="text-xs text-black/40 mt-1">JX800・JX801</p>
             </div>
-            <div class="text-right">
-              <p class="text-[10px] text-black/40">訂位代號</p>
-              <p class="font-bold text-lg text-maple tracking-wider">F8HK5T</p>
+            <div class="flex items-center gap-3">
+              <div class="text-right">
+                <p class="text-[10px] text-black/40">訂位代號</p>
+                <p class="font-bold text-lg text-maple tracking-wider">F8HK5T</p>
+              </div>
+              <span class="w-9 h-9 rounded-full bg-cream grid place-items-center text-black/45">
+                <i id="flightChevron" class="fa-solid fa-chevron-down transition-transform duration-200"></i>
+              </span>
             </div>
-          </div>
+          </button>
+          <div id="flightDetails" class="hidden">
 
           <!-- Outbound -->
           <div class="mt-4 rounded-[24px] border border-black/5 overflow-hidden">
@@ -244,6 +251,7 @@
                 <i class="fa-solid fa-circle-check mr-2"></i>機位確認
               </div>
             </div>
+          </div>
           </div>
         </div>
 
@@ -1050,6 +1058,17 @@
   }
   function closeFoodModal(){ $('#foodModal')?.classList.add('hidden'); document.body.style.overflow=''; }
 
+  function toggleFlightInfo(){
+    const details = document.getElementById('flightDetails');
+    const toggle = document.getElementById('flightToggle');
+    const chevron = document.getElementById('flightChevron');
+    if(!details) return;
+    const isOpening = details.classList.contains('hidden');
+    details.classList.toggle('hidden');
+    toggle?.setAttribute('aria-expanded', String(isOpening));
+    chevron?.classList.toggle('rotate-180', isOpening);
+  }
+
   function renderGuide(){
     const box=$('#guideCards');
     if(!box) return;
@@ -1135,15 +1154,18 @@
             <p class="text-xs leading-6 text-black/55 mt-1">${f.tip}</p>
           </div>
 
-          <div class="grid grid-cols-2 gap-2 mt-4">
-            <a target="_blank" href="${mapLink(f.map)}" class="rounded-2xl bg-ink text-white py-3 text-center text-xs font-semibold"><i class="fa-solid fa-location-dot mr-2"></i>Google Maps</a>
-            <a target="_blank" href="${searchLink(f.name)}" class="rounded-2xl bg-[#F8E9E1] text-maple py-3 text-center text-xs font-semibold"><i class="fa-solid fa-magnifying-glass mr-2"></i>查看食記</a>
+          <div class="flex justify-center mt-4">
+            <a target="_blank" href="${mapLink(f.map)}" class="px-6 py-3 rounded-2xl bg-ink text-white text-center text-xs font-semibold"><i class="fa-solid fa-location-dot mr-2"></i>Google Maps</a>
           </div>
         </div>
       </article>`).join('');
   }
 
   function goToGuide(ref){
+    // Remember where the user was in PLAN before jumping to GUIDE.
+    tabScrollPositions.plan = window.scrollY || window.pageYOffset || 0;
+    currentTab = 'guide';
+
     const guideTab=document.querySelector('.tab-btn[data-target="guide"]');
     if(guideTab){
       $$('.tab-btn').forEach(b=>b.classList.remove('active'));
@@ -1164,17 +1186,72 @@
   }
 
 
-  // NAVIGATION
+  // NAVIGATION — remember each tab's last scroll position
+  const tabScrollPositions = {};
+  let currentTab = document.querySelector('.tab-btn.active')?.dataset.target || 'plan';
+
   $$('.tab-btn').forEach(btn => btn.addEventListener('click', () => {
+    const targetTab = btn.dataset.target;
+
+    // Save the position of the page we are leaving.
+    tabScrollPositions[currentTab] = window.scrollY || window.pageYOffset || 0;
+
     $$('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     $$('.app-section').forEach(s => s.classList.remove('active'));
-    $('#'+btn.dataset.target).classList.add('active');
+    $('#'+targetTab).classList.add('active');
     $('#pageTitle').textContent = btn.dataset.title;
-    initPageOnDemand(btn.dataset.target);
-    window.scrollTo({top:0, behavior:'smooth'});
+    initPageOnDemand(targetTab);
+
+    currentTab = targetTab;
+
+    // Return to the exact previous position in this tab.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        window.scrollTo({top: tabScrollPositions[targetTab] || 0, behavior:'auto'});
+      });
+    });
   }));
   function scrollToTop(){ window.scrollTo({top:0,behavior:'smooth'}); }
+
+  // PAGE ON-DEMAND INIT
+  const lazyPageLoaded = {guide:true, wallet:false, lists:true, info:false};
+
+  function initPageOnDemand(target){
+    if(target === 'guide'){
+      if(!lazyPageLoaded.guide){
+        renderGuide();
+        lazyPageLoaded.guide = true;
+      }
+      return;
+    }
+
+    if(target === 'wallet'){
+      if(!lazyPageLoaded.wallet){
+        startSharedWallet();
+        renderExpenses();
+        lazyPageLoaded.wallet = true;
+      }
+      return;
+    }
+
+    if(target === 'lists'){
+      if(!lazyPageLoaded.lists){
+        renderChecklist();
+        renderMemos();
+        lazyPageLoaded.lists = true;
+      }
+      return;
+    }
+
+    if(target === 'info'){
+      if(!lazyPageLoaded.info){
+        renderWeatherDateTabs();
+        fetchWeather(currentWeatherRegion);
+        lazyPageLoaded.info = true;
+      }
+    }
+  }
 
   // WEATHER
   const WEATHER_REGIONS = {
@@ -1696,7 +1773,7 @@
   function escapeHTML(s){ return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
   function escapeAttr(s){ return String(s).replace(/"/g,'&quot;'); }
 
-  renderDays(); renderPayerButtons(); initChecklist(); renderExpenses(); updateWeatherTabUI(); renderWeatherDateTabs();
+  renderDays(); renderGuide(); renderPayerButtons(); initChecklist(); renderChecklist(); renderMemos(); renderExpenses(); updateWeatherTabUI(); renderWeatherDateTabs();
 
   // Fast startup screen
   requestAnimationFrame(() => {
