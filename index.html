@@ -508,6 +508,58 @@
 
     </main>
 
+
+    <!-- HOTEL DETAIL MODAL -->
+    <div id="hotelModal" class="fixed inset-0 z-[80] hidden">
+      <div class="absolute inset-0 bg-black/45 backdrop-blur-[2px]" onclick="closeHotelModal()"></div>
+      <div class="absolute inset-x-0 bottom-0 max-h-[88vh] overflow-y-auto rounded-t-[30px] bg-paper shadow-2xl">
+        <div class="sticky top-0 z-10 bg-paper/95 backdrop-blur border-b border-black/5 px-5 py-4 flex items-center justify-between">
+          <div>
+            <p class="text-[10px] tracking-[0.18em] text-maple font-semibold">STAY</p>
+            <h2 id="hotelModalTitle" class="font-serifjp text-xl mt-1">住宿資訊</h2>
+          </div>
+          <button onclick="closeHotelModal()" class="w-10 h-10 rounded-full bg-cream grid place-items-center text-black/45" aria-label="關閉">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="p-5 space-y-4">
+          <div id="hotelRoomPhotoWrap" class="rounded-[22px] overflow-hidden bg-cream min-h-[150px] grid place-items-center">
+            <div class="text-center text-black/30 py-8">
+              <i class="fa-regular fa-image text-3xl"></i>
+              <p class="text-xs mt-2">房型照片稍後補上</p>
+            </div>
+          </div>
+
+          <div class="rounded-[22px] border border-sand/50 overflow-hidden">
+            <div class="p-4 border-b border-black/5">
+              <p class="text-[10px] tracking-[0.16em] text-black/35">RESERVATION</p>
+              <p class="text-xs text-black/45 mt-2">訂房代號</p>
+              <div id="hotelModalBooking" class="font-semibold mt-1 break-all">—</div>
+            </div>
+
+            <a id="hotelModalPhone" href="#" class="p-4 border-b border-black/5 flex items-center justify-between gap-3">
+              <div>
+                <p class="text-[10px] tracking-[0.16em] text-black/35">PHONE</p>
+                <p id="hotelModalPhoneText" class="font-semibold mt-1">—</p>
+              </div>
+              <span class="w-10 h-10 rounded-full bg-ink text-white grid place-items-center"><i class="fa-solid fa-phone"></i></span>
+            </a>
+
+            <div class="p-4">
+              <p class="text-[10px] tracking-[0.16em] text-black/35">ADDRESS</p>
+              <p id="hotelModalAddress" class="text-sm leading-6 mt-1">—</p>
+            </div>
+          </div>
+
+          <a id="hotelModalMap" target="_blank" href="#" class="w-full rounded-2xl bg-ink text-white py-4 flex items-center justify-center gap-2 font-semibold">
+            <i class="fa-solid fa-location-arrow"></i>
+            Google Maps 導航
+          </a>
+        </div>
+      </div>
+    </div>
+
     <!-- BOTTOM NAV -->
     <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 max-w-md w-full z-40 glass border-t border-white/70 nav-bottom">
       <div class="grid grid-cols-6 px-1 py-2">
@@ -536,7 +588,7 @@
 <script>
   const tripDays = [
     {
-      day:'D1', date:'11/14', title:'桃園 → 成田 → 宇都宮', hotel:'宇都宮光芒酒店 Candeo Hotels Utsunomiya', booking:['5760355072','5502201920'],
+      day:'D1', date:'11/14', title:'桃園 → 成田 → 宇都宮', hotel:'宇都宮光芒酒店 Candeo Hotels Utsunomiya', booking:['5760355072','5502201920'], hotelPhone:'028-612-3107', hotelAddress:'〒321-0969 栃木県宇都宮市宮みらい1-1', hotelMap:'CANDEO HOTELS 宇都宮',
       items:[
         {time:'08:25', text:'星宇航空 JX800｜桃園 T1 → 成田 T2', note:'12:35 抵達｜飛行時間約 3 小時 10 分', important:true},
         {time:'12:35', text:'抵達成田機場｜入境、領行李、租車'},
@@ -545,7 +597,7 @@
       ]
     },
     {
-      day:'D2', date:'11/15', title:'宇都宮 → 那須高原', hotel:'Hotel Epinard Nasu 那須温泉酒店', booking:['5609303520'],
+      day:'D2', date:'11/15', title:'宇都宮 → 那須高原', hotel:'Hotel Epinard Nasu 那須温泉酒店', booking:['5609303520'], hotelPhone:'0287-78-6000', hotelAddress:'〒325-0302 栃木県那須郡那須町大字高久丙1番地', hotelMap:'ホテルエピナール那須',
       items:[
         {time:'上午', text:'那須動物王國', map:'那須動物王國', food:true, guideRef:'nasu-kingdom'},
         {time:'午餐', text:'園區內解決'},
@@ -554,7 +606,7 @@
       ]
     },
     {
-      day:'D3', date:'11/16', title:'那須高原 → 那須鹽原', hotel:'日光ガーデンホテル',
+      day:'D3', date:'11/16', title:'那須高原 → 那須鹽原', hotel:'日光ガーデンホテル', booking:[], hotelPhone:'0287-46-5802', hotelAddress:'〒329-2921 栃木県那須塩原市塩原1330', hotelMap:'日光ガーデンホテル',
       items:[
         {time:'上午', text:'大山公園・紅葉參道', map:'大山参道 那須塩原', guideRef:'oyama-sando'},
         {time:'中午', text:'千本松牧場午餐', map:'千本松牧場', food:true, foodRef:'D3-0', guideRef:'senbonmatsu'},
@@ -564,7 +616,7 @@
       ]
     },
     {
-      day:'D4', date:'11/17', title:'那須鹽原 → 日光・奧日光', hotel:'龜之井酒店 奧日光湯元', booking:['5776137729'],
+      day:'D4', date:'11/17', title:'那須鹽原 → 日光・奧日光', hotel:'龜之井酒店 奧日光湯元', booking:['5776137729'], hotelPhone:'0288-62-2700', hotelAddress:'〒321-1662 栃木県日光市湯元2519', hotelMap:'亀の井ホテル 奥日光湯元',
       items:[
         {time:'上午', text:'日光車站｜炸湯波饅頭、布丁', map:'日光駅', foodRef:'D4-0'},
         {time:'中午前', text:'中禪寺湖・華嚴瀑布', map:'華厳滝', guideRef:'chuzenji-kegon'},
@@ -574,7 +626,7 @@
       ]
     },
     {
-      day:'D5', date:'11/18', title:'奧日光 → 河口湖', hotel:'湖山亭', booking:['TDF45A0467329','T7816581E4EF3'],
+      day:'D5', date:'11/18', title:'奧日光 → 河口湖', hotel:'湖山亭', booking:['TDF45A0467329','T7816581E4EF3'], hotelPhone:'0555-72-1145', hotelAddress:'〒401-0303 山梨県南都留郡富士河口湖町浅川10', hotelMap:'うぶや 河口湖',
       items:[
         {time:'早上', text:'日光東照宮', map:'日光東照宮', guideRef:'toshogu'},
         {time:'中午', text:'高速公路休息站，或下交流道找餐廳'},
@@ -583,7 +635,7 @@
       ]
     },
     {
-      day:'D6', date:'11/19', title:'河口湖 → 山中湖 → 御殿場', hotel:'HOTEL CLAD 御殿場', booking:['3625-3162-4917','3625-3164-2178'],
+      day:'D6', date:'11/19', title:'河口湖 → 山中湖 → 御殿場', hotel:'HOTEL CLAD 御殿場', booking:['3625-3162-4917','3625-3164-2178'], hotelPhone:'0550-81-0321', hotelAddress:'〒412-0023 静岡県御殿場市深沢2839-1', hotelMap:'HOTEL CLAD 御殿場',
       items:[
         {time:'上午', text:'山中湖 THE PARK 咖啡廳吃點心', map:'THE PARK 山中湖', food:true, foodRef:'D6-0'},
         {time:'上午', text:'白糸瀑布・音止瀑布', map:'白糸の滝 静岡', note:'依天氣與富士山能見度彈性調整', guideRef:'shiraito-otodome'},
@@ -592,7 +644,7 @@
       ]
     },
     {
-      day:'D7', date:'11/20', title:'御殿場 → 成田', hotel:'成田國際花園酒店（暫定）', booking:['5123731738'],
+      day:'D7', date:'11/20', title:'御殿場 → 成田', hotel:'成田國際花園酒店（暫定）', booking:['5123731738'], hotelPhone:'0476-23-5522', hotelAddress:'〒286-0133 千葉県成田市吉倉241-1', hotelMap:'インターナショナルガーデンホテル成田',
       items:[
         {time:'上午', text:'御殿場 Premium Outlets', map:'御殿場プレミアム アウトレット'},
         {time:'午餐', text:'Outlet 內用餐', food:true, foodRef:'D7-0'},
@@ -975,23 +1027,43 @@
                   </div>
                 </div>
                 ${(i.map || i.foodRef || i.guideRef) ? `<div class="flex gap-2 mt-3 flex-wrap">
-                  ${i.map ? `<a target="_blank" href="${mapLink(i.map)}" class="px-3 py-1.5 rounded-full bg-white text-moss text-[11px] font-semibold"><i class="fa-solid fa-location-dot mr-1"></i>Google Maps</a>` : ''}
-                  ${i.map ? `<a target="_blank" href="${searchLink(i.map)}" class="px-3 py-1.5 rounded-full bg-white text-maple text-[11px] font-semibold"><i class="fa-solid fa-magnifying-glass mr-1"></i>${i.food ? '查看食記':'查看遊記'}</a>` : ''}
+                  ${i.map ? `<div class="flex justify-center">
+              <a target="_blank" href="${mapLink(g.map || g.title)}" class="px-6 py-3 rounded-2xl bg-ink text-white text-xs font-semibold text-center"><i class="fa-solid fa-location-dot mr-2"></i>Google Maps</a>
+            </div>` : ''}
                   ${i.foodRef ? `<button onclick="goToFood('${i.foodRef}')" class="px-3 py-1.5 rounded-full bg-maple text-white text-[11px] font-semibold"><i class="fa-solid fa-utensils mr-1"></i>美食推薦</button>` : ''}
                   ${i.guideRef ? `<button onclick="goToGuide('${i.guideRef}')" class="px-3 py-1.5 rounded-full bg-moss text-white text-[11px] font-semibold"><i class="fa-solid fa-book-open mr-1"></i>景點導覽</button>` : ''}
                 </div>`:''}
               </div>
             </div>`).join('')}
         </div>
-        <div class="mt-4 p-3.5 rounded-2xl bg-mist/70 text-sm flex gap-2">
-          <i class="fa-solid fa-bed text-moss mt-0.5"></i>
-          <span>
-            <b>住宿：</b>${d.hotel}
-            ${d.booking?.length ? `<span class="block mt-1 text-xs text-black/50"><b>訂房代號：</b>${d.booking.join(' ／ ')}</span>` : ''}
-          </span>
-        </div>
+        <button onclick="openHotelModal('${d.day}')" class="mt-4 w-full p-3.5 rounded-2xl bg-mist/70 text-sm flex items-center gap-3 text-left">
+          <i class="fa-solid fa-bed text-moss"></i>
+          <span class="flex-1"><b>住宿：</b>${d.hotel}</span>
+          <span class="text-[10px] text-moss font-semibold whitespace-nowrap">查看資訊 <i class="fa-solid fa-chevron-right ml-1"></i></span>
+        </button>
       </article>`;
     }).join('');
+  }
+
+  function openHotelModal(day){
+    const d=tripDays.find(x=>x.day===day);
+    if(!d) return;
+
+    $('#hotelModalTitle').textContent=d.hotel;
+    $('#hotelModalBooking').textContent=d.booking?.length ? d.booking.join(' ／ ') : '尚未提供';
+    $('#hotelModalPhoneText').textContent=d.hotelPhone || '—';
+    $('#hotelModalPhone').href=d.hotelPhone ? `tel:${d.hotelPhone.replace(/[^0-9+]/g,'')}` : '#';
+    $('#hotelModalAddress').textContent=d.hotelAddress || '—';
+    $('#hotelModalMap').href=mapLink(d.hotelMap || d.hotel);
+
+    const modal=$('#hotelModal');
+    modal.classList.remove('hidden');
+    document.body.style.overflow='hidden';
+  }
+
+  function closeHotelModal(){
+    $('#hotelModal')?.classList.add('hidden');
+    document.body.style.overflow='';
   }
 
   function renderGuide(){
@@ -1025,7 +1097,7 @@
           </div>
           <div class="grid grid-cols-2 gap-2">
             <a target="_blank" href="${mapLink(g.map)}" class="rounded-2xl bg-ink text-white py-3 text-center text-xs font-semibold"><i class="fa-solid fa-location-dot mr-2"></i>Google Maps</a>
-            <a target="_blank" href="${searchLink(g.title)}" class="rounded-2xl bg-white border border-sand/60 text-maple py-3 text-center text-xs font-semibold"><i class="fa-solid fa-magnifying-glass mr-2"></i>延伸閱讀</a>
+            
           </div>
         </div>
       </article>`;
