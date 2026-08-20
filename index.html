@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#F5F1E8" />
+  <title>Tokyo Road Trip 2026｜旅行手冊</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Shippori+Mincho:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Noto Sans TC', 'sans-serif'],
+            serifjp: ['Shippori Mincho', 'serif']
+          },
+          colors: {
+            cream: '#F5F1E8',
+            paper: '#FFFDFC',
+            ink: '#2F332F',
+            moss: '#586658',
+            maple: '#B96B45',
+            sand: '#D9C7AD',
+            mist: '#E8ECE7',
+            gold: '#C5A16B'
+          },
+          boxShadow: {
+            soft: '0 10px 30px rgba(72, 65, 55, .10)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Noto Sans TC', sans-serif; background: #F5F1E8; color: #2F332F; }
+    .font-serifjp { font-family: 'Shippori Mincho', serif; }
+    .safe-bottom { padding-bottom: calc(88px + env(safe-area-inset-bottom)); }
+    .nav-bottom { padding-bottom: env(safe-area-inset-bottom); }
+    .app-section { display:none; }
+    .app-section.active { display:block; }
+    .timeline::before {
+      content:''; position:absolute; left:16px; top:12px; bottom:12px; width:2px; background:#D9C7AD;
+    }
+    .timeline-dot { position:absolute; left:10px; top:7px; width:14px; height:14px; border-radius:999px; background:#B96B45; border:3px solid #FFFDFC; box-shadow:0 0 0 1px #B96B45; }
+    .photo-tile { background: linear-gradient(135deg, rgba(88,102,88,.85), rgba(185,107,69,.72)); }
+    .glass { backdrop-filter: blur(10px); background: rgba(255,253,252,.88); }
+    .tab-btn.active { color:#B96B45; }
+    .tab-btn.active .tab-icon { background:#B96B45; color:#fff; transform:translateY(-4px); }
+    .tab-icon { transition:.2s ease; }
+    input, textarea { outline: none; }
+    .hide-scrollbar::-webkit-scrollbar { display:none; }
+    .hide-scrollbar { scrollbar-width:none; }
+    .check-item input:checked + span { text-decoration:line-through; opacity:.5; }
+  </style>
+</head>
+<body>
+  <div class="max-w-md mx-auto min-h-screen bg-cream safe-bottom shadow-2xl relative overflow-hidden">
+
+    <!-- HEADER -->
+    <header class="px-5 pt-6 pb-4 sticky top-0 z-30 glass border-b border-white/70">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p class="text-[11px] tracking-[0.28em] text-maple font-semibold">TOKYO ROAD TRIP 2026</p>
+          <h1 id="pageTitle" class="font-serifjp text-2xl mt-1">旅程總覽</h1>
+          <p class="text-xs text-black/45 mt-1">11.14 SAT — 11.21 SAT ・ 8天7夜</p>
+        </div>
+        <button onclick="scrollToTop()" class="w-11 h-11 rounded-2xl bg-paper shadow-soft grid place-items-center text-moss" aria-label="回到頂部">
+          <i class="fa-solid fa-mountain-sun"></i>
+        </button>
+      </div>
+    </header>
+
+    <main class="px-4 pt-4">
+
+      <!-- PLAN -->
+      <section id="plan" class="app-section active space-y-4">
+        <div class="rounded-[28px] overflow-hidden shadow-soft relative min-h-[230px] photo-tile text-white p-6 flex flex-col justify-end">
+          <div class="absolute inset-0 opacity-25" style="background-image: radial-gradient(circle at 20% 20%, white 0 1px, transparent 1px); background-size: 24px 24px;"></div>
+          <div class="relative z-10">
+            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 border border-white/20 text-xs mb-3">
+              <i class="fa-solid fa-car-side"></i> Autumn Drive
+            </span>
+            <h2 class="font-serifjp text-3xl leading-tight">宇都宮 → 那須 → 日光<br>河口湖 → 御殿場</h2>
+            <p class="text-sm text-white/80 mt-3">紅葉、溫泉、富士山與自駕公路旅行</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-paper rounded-3xl p-4 shadow-soft">
+            <p class="text-xs text-black/45">去程</p>
+            <p class="font-bold mt-1">桃園 → 成田</p>
+            <p class="text-sm text-maple mt-1">08:25 — 12:35</p>
+          </div>
+          <div class="bg-paper rounded-3xl p-4 shadow-soft">
+            <p class="text-xs text-black/45">回程</p>
+            <p class="font-bold mt-1">成田 → 桃園</p>
+            <p class="text-sm text-maple mt-1">13:45 — 16:50</p>
+          </div>
+        </div>
+
+        <div id="dayCards" class="space-y-4"></div>
+      </section>
+
+      <!-- GUIDE -->
+      <section id="guide" class="app-section space-y-5">
+        <div class="bg-paper rounded-[28px] p-5 shadow-soft">
+          <p class="text-xs tracking-[0.22em] text-maple font-semibold">TRAVEL GUIDE</p>
+          <h2 class="font-serifjp text-2xl mt-2">北關東・富士山深度導覽</h2>
+          <p class="text-sm leading-7 text-black/65 mt-3">不只看景點，也把每一站的故事、地理背景與旅途中值得注意的小細節放進來。</p>
+        </div>
+
+        <article class="bg-paper rounded-[28px] overflow-hidden shadow-soft">
+          <div class="h-40 photo-tile grid place-items-center text-white">
+            <div class="text-center">
+              <i class="fa-solid fa-paw text-3xl"></i>
+              <p class="font-serifjp text-xl mt-2">那須高原</p>
+            </div>
+          </div>
+          <div class="p-5 space-y-3">
+            <h3 class="font-bold text-lg">那須動物王國 × 火山高原地形</h3>
+            <p class="text-sm leading-7 text-black/65">那須高原位在那須連山東麓，是關東北部很典型的避暑、溫泉與自然觀光區。那須動物王國特色是把「動物展示」與高原景觀結合，園區面積大，建議優先鎖定真正想看的表演或動物館區，避免帶著小朋友一直折返。</p>
+            <div class="flex gap-2 flex-wrap">
+              <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=%E9%82%A3%E9%A0%88%E5%8B%95%E7%89%A9%E7%8E%8B%E5%9C%8B" class="px-3 py-2 rounded-full bg-mist text-moss text-xs font-semibold"><i class="fa-solid fa-location-dot mr-1"></i> Google Maps</a>
+              <a target="_blank" href="https://www.google.com/search?q=%E9%82%A3%E9%A0%88%E5%8B%95%E7%89%A9%E7%8E%8B%E5%9C%8B+%E9%81%8A%E8%A8%98" class="px-3 py-2 rounded-full bg-[#F8E9E1] text-maple text-xs font-semibold"><i class="fa-solid fa-book-open mr-1"></i> 查看遊記</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-paper rounded-[28px] p-5 shadow-soft">
+          <p class="text-xs tracking-[0.18em] text-maple font-semibold">NIKKO</p>
+          <h3 class="font-serifjp text-xl mt-1">日光東照宮</h3>
+          <p class="text-sm leading-7 text-black/65 mt-3">東照宮供奉德川家康，以大量華麗雕刻與金箔裝飾聞名。和日本常見的樸素神社不同，它刻意呈現江戶幕府權威與工藝極致。著名的「三猿」與「眠貓」不是單純裝飾，而是帶有儒家、佛教與人生寓意的圖像語言。</p>
+          <div class="mt-4 p-4 rounded-2xl bg-cream border border-sand/50">
+            <p class="text-xs font-bold text-moss"><i class="fa-solid fa-lightbulb mr-1"></i> 冷知識</p>
+            <p class="text-sm leading-6 mt-1 text-black/60">「日光を見ずして結構と言うなかれ」意指沒有看過日光，不要輕易說某處很美。這句話也反映日光在日本觀光史上的地位。</p>
+          </div>
+        </article>
+
+        <article class="bg-paper rounded-[28px] p-5 shadow-soft">
+          <p class="text-xs tracking-[0.18em] text-maple font-semibold">OKUNIKKO</p>
+          <h3 class="font-serifjp text-xl mt-1">中禪寺湖・華嚴瀑布・戰場之原</h3>
+          <p class="text-sm leading-7 text-black/65 mt-3">中禪寺湖位於男體山山麓，是火山活動形成的堰塞湖。湖水經大尻川流向華嚴瀑布，因此這幾個景點其實是一套連續的地形故事。戰場之原則是高原濕地，名字來自神話中山神爭奪中禪寺湖的傳說，而不是歷史上的戰場。</p>
+        </article>
+
+        <article class="bg-paper rounded-[28px] overflow-hidden shadow-soft">
+          <div class="p-5">
+            <p class="text-xs tracking-[0.18em] text-maple font-semibold">FUJI FIVE LAKES</p>
+            <h3 class="font-serifjp text-xl mt-1">河口湖・紅葉回廊</h3>
+            <p class="text-sm leading-7 text-black/65 mt-3">河口湖是富士五湖中觀光機能最成熟的一座。11 月中旬常是楓葉色彩最豐富的時期，傍晚後的紅葉回廊點燈很適合安排在長途移動後，當作不需要太多體力的收尾行程。</p>
+          </div>
+          <iframe class="w-full h-64 border-0" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=138.739%2C35.509%2C138.785%2C35.535&layer=mapnik" title="河口湖 OpenStreetMap"></iframe>
+        </article>
+      </section>
+
+      <!-- WALLET -->
+      <section id="wallet" class="app-section space-y-4">
+        <div class="bg-paper rounded-[28px] p-5 shadow-soft">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-xs tracking-[0.2em] text-maple font-semibold">EXCHANGE</p>
+              <h2 class="font-serifjp text-xl mt-1">日幣快速換算</h2>
+            </div>
+            <div class="text-right">
+              <label class="text-[10px] text-black/40 block">JPY → TWD</label>
+              <input id="rateInput" type="number" step="0.001" class="w-24 bg-cream rounded-xl px-3 py-2 text-right font-bold" />
+            </div>
+          </div>
+          <div class="mt-4">
+            <label class="text-xs text-black/45">可輸入算式，例如 500+200*3</label>
+            <div class="flex gap-2 mt-2">
+              <input id="calcInput" inputmode="decimal" placeholder="500+200*3" class="flex-1 bg-cream rounded-2xl px-4 py-3 text-lg font-semibold" />
+              <button id="calcBtn" class="w-14 rounded-2xl bg-maple text-white text-xl font-bold">=</button>
+            </div>
+          </div>
+          <div id="calcResult" class="mt-4 rounded-2xl bg-mist p-4 hidden"></div>
+        </div>
+
+        <div class="bg-paper rounded-[28px] p-5 shadow-soft">
+          <p class="text-xs tracking-[0.2em] text-maple font-semibold">EXPENSE</p>
+          <h2 class="font-serifjp text-xl mt-1">新增記帳</h2>
+          <div class="space-y-3 mt-4">
+            <input id="expenseName" placeholder="品項，例如：宇都宮餃子" class="w-full bg-cream rounded-2xl px-4 py-3" />
+            <input id="expenseAmount" type="number" inputmode="decimal" placeholder="日幣金額 JPY" class="w-full bg-cream rounded-2xl px-4 py-3" />
+            <div class="flex items-center gap-3">
+              <label class="flex-1 cursor-pointer border border-dashed border-sand rounded-2xl py-3 px-4 text-sm text-moss text-center">
+                <i class="fa-solid fa-camera mr-2"></i>拍照 / 上傳
+                <input id="expensePhoto" type="file" accept="image/*" capture="environment" class="hidden" />
+              </label>
+              <img id="photoPreview" class="w-14 h-14 rounded-xl object-cover hidden" alt="預覽" />
+            </div>
+            <button id="addExpenseBtn" class="w-full rounded-2xl bg-ink text-white py-3.5 font-semibold"><i class="fa-solid fa-plus mr-2"></i>加入記帳</button>
+          </div>
+        </div>
+
+        <div class="bg-paper rounded-[28px] p-5 shadow-soft">
+          <div class="flex justify-between items-end">
+            <div>
+              <p class="text-xs tracking-[0.2em] text-maple font-semibold">HISTORY</p>
+              <h2 class="font-serifjp text-xl mt-1">支出紀錄</h2>
+            </div>
+            <div id="expenseTotal" class="text-right text-sm"></div>
+          </div>
+          <div id="expenseList" class="mt-4 space-y-3"></div>
+        </div>
+      </section>
+
+      <!-- LISTS -->
+      <section id="lists" class="app-section space-y-4">
+        <div class="bg-paper rounded-[28px] p-5 shadow-soft">
+          <p class="text-xs tracking-[0.2em] text-maple font-semibold">CHECKLIST</p>
+          <div class="flex items-center justify-between mt-1">
+            <h2 class="font-serifjp text-xl">行前準備</h2>
+            <span id="checkProgress" class="text-xs text-black/40"></span>
+          </div>
+          <div id="checklist" class="mt-4 space-y-2"></div>
+          <div class="flex gap-2 mt-4">
+            <input id="newChecklistItem" placeholder="新增項目" class="flex-1 bg-cream rounded-2xl px-4 py-3 text-sm" />
+            <button id="addChecklistBtn" class="w-12 rounded-2xl bg-moss text-white"><i class="fa-solid fa-plus"></i></button>
+          </div>
+        </div>
+
+        <div class="bg-paper rounded-[28px] p-5 shadow-soft">
+          <p class="text-xs tracking-[0.2em] text-maple font-semibold">MEMO</p>
+          <h2 class="font-serifjp text-xl mt-1">個人備忘錄</h2>
+          <div class="flex gap-2 mt-4">
+            <textarea id="memoInput" rows="3" placeholder="可輸入文字或網址，例如餐廳訂位資訊" class="flex-1 bg-cream rounded-2xl px-4 py-3 text-sm resize-none"></textarea>
+          </div>
+          <button id="addMemoBtn" class="w-full mt-3 rounded-2xl bg-ink text-white py-3 font-semibold">儲存備忘</button>
+          <div id="memoList" class="mt-4 space-y-3"></div>
+        </div>
+      </section>
+
+      <!-- INFO -->
+      <section id="info" class="app-section space-y-4">
+        <div class="bg-paper rounded-[28px] p-5 shadow-soft">
+          <p class="text-xs tracking-[0.2em] text-maple font-semibold">WEATHER</p>
+          <h2 class="font-serifjp text-xl mt-1">天氣與路況</h2>
+          <div class="grid grid-cols-2 gap-3 mt-4">
+            <a target="_blank" href="https://www.jma.go.jp/bosai/forecast/" class="rounded-2xl bg-mist p-4">
+              <i class="fa-solid fa-cloud-sun text-moss"></i>
+              <p class="font-semibold mt-2">日本氣象廳</p>
+              <p class="text-xs text-black/45 mt-1">天氣預報・警報</p>
+            </a>
+            <a target="_blank" href="https://www.jartic.or.jp/" class="rounded-2xl bg-[#F8E9E1] p-4">
+              <i class="fa-solid fa-road text-maple"></i>
+              <p class="font-semibold mt-2">JARTIC</p>
+              <p class="text-xs text-black/45 mt-1">日本道路交通資訊</p>
+            </a>
+          </div>
+        </div>
+
+        <div class="bg-paper rounded-[28px] p-5 shadow-soft">
+          <p class="text-xs tracking-[0.2em] text-maple font-semibold">EMERGENCY</p>
+          <h2 class="font-serifjp text-xl mt-1">緊急聯絡</h2>
+          <div class="space-y-3 mt-4">
+            <a href="tel:110" class="flex items-center justify-between p-4 rounded-2xl bg-cream"><span><i class="fa-solid fa-shield-halved w-7 text-moss"></i>警察</span><strong>110</strong></a>
+            <a href="tel:119" class="flex items-center justify-between p-4 rounded-2xl bg-cream"><span><i class="fa-solid fa-truck-medical w-7 text-maple"></i>救護車 / 消防</span><strong>119</strong></a>
+            <a target="_blank" href="https://www.roc-taiwan.org/jp_ja/index.html" class="block p-4 rounded-2xl bg-cream">
+              <p class="font-semibold"><i class="fa-solid fa-building-columns w-7 text-gold"></i>駐日代表處</p>
+              <p class="text-xs text-black/50 mt-1">建議出發前再次確認最新緊急聯絡方式</p>
+            </a>
+          </div>
+        </div>
+
+        <div class="bg-paper rounded-[28px] p-5 shadow-soft">
+          <p class="text-xs tracking-[0.2em] text-maple font-semibold">NOTES</p>
+          <h2 class="font-serifjp text-xl mt-1">日本旅行注意事項</h2>
+          <ul class="mt-4 space-y-3 text-sm leading-6 text-black/65">
+            <li class="flex gap-3"><i class="fa-solid fa-circle-exclamation text-maple mt-1"></i><span>11 月奧日光與高海拔區域氣溫可能明顯低於東京，早晚需準備保暖外套；自駕前留意是否有結冰或冬季胎需求。</span></li>
+            <li class="flex gap-3"><i class="fa-solid fa-bag-shopping text-moss mt-1"></i><span>2026 年日本免稅制度改為退款制後，離境流程與退稅操作可能與過去不同，出發前請再次確認日本官方最新規定。</span></li>
+            <li class="flex gap-3"><i class="fa-solid fa-passport text-gold mt-1"></i><span>護照、租車資料、國際駕照與台灣駕照建議分開備份；租車取車時確認 ETC 卡、兒童安全座椅與車輛既有刮傷。</span></li>
+            <li class="flex gap-3"><i class="fa-solid fa-ban text-maple mt-1"></i><span>入境日本前請確認肉類、蔬果與藥品攜帶限制；回台灣時也要遵守台灣檢疫規定。</span></li>
+          </ul>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- BOTTOM NAV -->
+    <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 max-w-md w-full z-40 glass border-t border-white/70 nav-bottom">
+      <div class="grid grid-cols-5 px-2 py-2">
+        <button class="tab-btn active flex flex-col items-center gap-1 text-[10px]" data-target="plan" data-title="旅程總覽">
+          <span class="tab-icon w-10 h-8 rounded-2xl grid place-items-center"><i class="fa-solid fa-route"></i></span><span>PLAN</span>
+        </button>
+        <button class="tab-btn flex flex-col items-center gap-1 text-[10px] text-black/45" data-target="guide" data-title="深度導覽">
+          <span class="tab-icon w-10 h-8 rounded-2xl grid place-items-center"><i class="fa-solid fa-book-open"></i></span><span>GUIDE</span>
+        </button>
+        <button class="tab-btn flex flex-col items-center gap-1 text-[10px] text-black/45" data-target="wallet" data-title="旅費錢包">
+          <span class="tab-icon w-10 h-8 rounded-2xl grid place-items-center"><i class="fa-solid fa-wallet"></i></span><span>WALLET</span>
+        </button>
+        <button class="tab-btn flex flex-col items-center gap-1 text-[10px] text-black/45" data-target="lists" data-title="清單備忘">
+          <span class="tab-icon w-10 h-8 rounded-2xl grid place-items-center"><i class="fa-solid fa-list-check"></i></span><span>LISTS</span>
+        </button>
+        <button class="tab-btn flex flex-col items-center gap-1 text-[10px] text-black/45" data-target="info" data-title="旅行資訊">
+          <span class="tab-icon w-10 h-8 rounded-2xl grid place-items-center"><i class="fa-solid fa-circle-info"></i></span><span>INFO</span>
+        </button>
+      </div>
+    </nav>
+  </div>
+
+<script>
+  const tripDays = [
+    {
+      day:'D1', date:'11/14', title:'桃園 → 成田 → 宇都宮', hotel:'宇都宮光芒酒店 Candeo Hotels Utsunomiya',
+      items:[
+        {time:'08:25', text:'桃園機場起飛', important:true},
+        {time:'12:35', text:'抵達成田機場｜入境、領行李、租車'},
+        {time:'14:30+', text:'成田機場出發 → 宇都宮', note:'車程約 2 小時'},
+        {time:'晚上', text:'宇都宮餃子晚餐', map:'宇都宮 餃子'}
+      ]
+    },
+    {
+      day:'D2', date:'11/15', title:'宇都宮 → 那須高原', hotel:'Hotel Epinard Nasu 那須温泉酒店',
+      items:[
+        {time:'上午', text:'那須動物王國', map:'那須動物王國', food:true},
+        {time:'午餐', text:'園區內解決'},
+        {time:'下午', text:'平成之森', map:'那須平成之森'},
+        {time:'備選', text:'那須纜車／殺生石／那須溫泉神社', map:'殺生石 那須溫泉神社', note:'依天氣、體力與時間彈性調整'}
+      ]
+    },
+    {
+      day:'D3', date:'11/16', title:'那須高原 → 那須鹽原', hotel:'日光ガーデンホテル',
+      items:[
+        {time:'上午', text:'大山公園・紅葉參道', map:'大山参道 那須塩原'},
+        {time:'中午', text:'千本松牧場午餐', map:'千本松牧場', food:true},
+        {time:'下午', text:'紅葉谷大吊橋', map:'紅の吊橋 那須塩原'},
+        {time:'下午', text:'回顧吊橋・回顧瀑布／龍化瀑布', map:'回顧の吊橋'},
+        {time:'傍晚', text:'那須鹽原溫泉街・紅吊橋', map:'塩原温泉 紅の吊橋'}
+      ]
+    },
+    {
+      day:'D4', date:'11/17', title:'那須鹽原 → 日光・奧日光', hotel:'龜之井酒店 奧日光湯元',
+      items:[
+        {time:'上午', text:'日光車站｜炸湯波饅頭、布丁', map:'日光駅'},
+        {time:'中午前', text:'中禪寺湖・華嚴瀑布', map:'華厳滝'},
+        {time:'午餐', text:'中禪寺湖周邊找餐廳', map:'中禅寺湖 レストラン', food:true},
+        {time:'下午', text:'龍頭瀑布', map:'竜頭ノ滝'},
+        {time:'下午', text:'戰場之原・湯瀑布', map:'戦場ヶ原 湯滝'}
+      ]
+    },
+    {
+      day:'D5', date:'11/18', title:'奧日光 → 河口湖', hotel:'湖山亭',
+      items:[
+        {time:'早上', text:'日光東照宮', map:'日光東照宮', important:true},
+        {time:'中午', text:'高速公路休息站，或下交流道找餐廳'},
+        {time:'移動', text:'前往河口湖', note:'長途車程約 4 小時'},
+        {time:'傍晚', text:'河口湖紅葉回廊', map:'河口湖 もみじ回廊', note:'依抵達時間決定是否前往'}
+      ]
+    },
+    {
+      day:'D6', date:'11/19', title:'河口湖 → 山中湖 → 御殿場', hotel:'HOTEL CLAD 御殿場',
+      items:[
+        {time:'上午', text:'山中湖 THE PARK 咖啡廳吃點心', map:'THE PARK 山中湖', food:true},
+        {time:'上午', text:'白糸瀑布・音止瀑布', map:'白糸の滝 静岡', note:'依天氣與富士山能見度彈性調整'},
+        {time:'下午', text:'富士山夢之大橋', map:'富士山夢の大橋'},
+        {time:'下午', text:'富士山世界遺產中心', map:'静岡県富士山世界遺産センター'}
+      ]
+    },
+    {
+      day:'D7', date:'11/20', title:'御殿場 → 成田', hotel:'成田國際花園酒店（暫定）',
+      items:[
+        {time:'上午', text:'御殿場 Premium Outlets', map:'御殿場プレミアム アウトレット'},
+        {time:'午餐', text:'Outlet 內用餐', food:true},
+        {time:'下午', text:'御殿場 → 成田', note:'車程約 2.5 小時', important:true},
+        {time:'晚上', text:'飯店晚餐或成田市用餐', map:'成田駅 レストラン'},
+        {time:'晚上', text:'暫定飯店還車／確認隔日接駁'}
+      ]
+    },
+    {
+      day:'D8', date:'11/21', title:'成田 → 桃園', hotel:'返台',
+      items:[
+        {time:'上午', text:'搭飯店接駁車前往成田機場', important:true},
+        {time:'機場', text:'辦理登機、托運與 2026 新制退稅確認'},
+        {time:'13:45', text:'成田機場起飛', important:true},
+        {time:'16:50', text:'抵達桃園機場'}
+      ]
+    }
+  ];
+
+  const checklistDefaults = ['護照','台灣駕照','日文譯本／國際駕照相關文件','租車預約單','ETC / 高速公路方案確認','兒童安全座椅確認','機票','飯店訂房資料','網卡 / eSIM','行動電源','常備藥','保暖外套','雨具','信用卡 / 日幣現金','旅遊保險'];
+
+  const $ = (s) => document.querySelector(s);
+  const $$ = (s) => [...document.querySelectorAll(s)];
+  const money = n => Math.round(Number(n)||0).toLocaleString('zh-TW');
+
+  function mapLink(q){ return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`; }
+  function searchLink(q){ return `https://www.google.com/search?q=${encodeURIComponent(q+' 遊記 食記')}`; }
+
+  function renderDays(){
+    $('#dayCards').innerHTML = tripDays.map(d => `
+      <article class="bg-paper rounded-[28px] p-5 shadow-soft">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-white bg-maple rounded-full px-2.5 py-1">${d.day}</span>
+              <span class="text-xs text-black/40">${d.date}</span>
+            </div>
+            <h3 class="font-serifjp text-xl mt-2">${d.title}</h3>
+          </div>
+          <button onclick="window.open('${mapLink(d.title)}','_blank')" class="w-10 h-10 rounded-2xl bg-cream text-moss"><i class="fa-solid fa-map-location-dot"></i></button>
+        </div>
+        <div class="timeline relative mt-5 pl-10 space-y-4">
+          ${d.items.map(i => `
+            <div class="relative">
+              <span class="timeline-dot"></span>
+              <div class="${i.important ? 'bg-[#FFF1E8] border border-[#E8C3AF]' : 'bg-cream'} rounded-2xl p-3.5">
+                <div class="flex items-start justify-between gap-2">
+                  <div>
+                    <p class="text-[11px] font-bold ${i.important ? 'text-maple' : 'text-moss'}">${i.time}${i.important ? ' ・ IMPORTANT' : ''}</p>
+                    <p class="text-sm font-semibold mt-1">${i.text}</p>
+                    ${i.note ? `<p class="text-xs text-black/45 mt-1.5 leading-5">${i.note}</p>`:''}
+                  </div>
+                </div>
+                ${i.map ? `<div class="flex gap-2 mt-3 flex-wrap">
+                  <a target="_blank" href="${mapLink(i.map)}" class="px-3 py-1.5 rounded-full bg-white text-moss text-[11px] font-semibold"><i class="fa-solid fa-location-dot mr-1"></i>Google Maps</a>
+                  <a target="_blank" href="${searchLink(i.map)}" class="px-3 py-1.5 rounded-full bg-white text-maple text-[11px] font-semibold"><i class="fa-solid fa-magnifying-glass mr-1"></i>${i.food ? '查看食記':'查看遊記'}</a>
+                </div>`:''}
+              </div>
+            </div>`).join('')}
+        </div>
+        <div class="mt-4 p-3.5 rounded-2xl bg-mist/70 text-sm flex gap-2">
+          <i class="fa-solid fa-bed text-moss mt-0.5"></i>
+          <span><b>住宿：</b>${d.hotel}</span>
+        </div>
+      </article>
+    `).join('');
+  }
+
+  // NAVIGATION
+  $$('.tab-btn').forEach(btn => btn.addEventListener('click', () => {
+    $$('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    $$('.app-section').forEach(s => s.classList.remove('active'));
+    $('#'+btn.dataset.target).classList.add('active');
+    $('#pageTitle').textContent = btn.dataset.title;
+    window.scrollTo({top:0, behavior:'smooth'});
+  }));
+  function scrollToTop(){ window.scrollTo({top:0,behavior:'smooth'}); }
+
+  // WALLET
+  let rate = Number(localStorage.getItem('trip_rate') || 0.22);
+  $('#rateInput').value = rate;
+  $('#rateInput').addEventListener('change', e => {
+    rate = Number(e.target.value)||0.22;
+    localStorage.setItem('trip_rate', rate);
+    renderExpenses();
+  });
+
+  function safeEval(expr){
+    const cleaned = expr.replace(/\s+/g,'');
+    if(!/^[0-9+\-*/().]+$/.test(cleaned)) throw new Error('請只輸入數字與 + - * / ( )');
+    const result = Function(`"use strict"; return (${cleaned})`)();
+    if(!Number.isFinite(result)) throw new Error('算式無效');
+    return result;
+  }
+  $('#calcBtn').addEventListener('click', () => {
+    try {
+      const jpy = safeEval($('#calcInput').value);
+      const twd = jpy * rate;
+      $('#calcResult').classList.remove('hidden');
+      $('#calcResult').innerHTML = `<div class="flex justify-between items-end"><div><p class="text-xs text-black/45">計算結果</p><p class="text-2xl font-bold mt-1">¥ ${money(jpy)}</p></div><div class="text-right"><p class="text-xs text-black/45">約合台幣</p><p class="text-lg font-bold text-maple">NT$ ${money(twd)}</p></div></div>`;
+    } catch(err){ alert(err.message); }
+  });
+
+  let photoData = '';
+  $('#expensePhoto').addEventListener('change', async e => {
+    const file = e.target.files[0]; if(!file) return;
+    photoData = await compressImage(file);
+    $('#photoPreview').src = photoData;
+    $('#photoPreview').classList.remove('hidden');
+  });
+  function compressImage(file){
+    return new Promise((resolve,reject)=>{
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const img = new Image();
+        img.onload = () => {
+          const max = 800;
+          let w=img.width, h=img.height;
+          const scale = Math.min(1, max/Math.max(w,h));
+          w=Math.round(w*scale); h=Math.round(h*scale);
+          const canvas=document.createElement('canvas'); canvas.width=w; canvas.height=h;
+          const ctx=canvas.getContext('2d'); ctx.drawImage(img,0,0,w,h);
+          resolve(canvas.toDataURL('image/jpeg',0.68));
+        };
+        img.onerror = reject; img.src = ev.target.result;
+      };
+      reader.onerror = reject; reader.readAsDataURL(file);
+    });
+  }
+  function getExpenses(){ return JSON.parse(localStorage.getItem('trip_expenses')||'[]'); }
+  function setExpenses(v){ localStorage.setItem('trip_expenses',JSON.stringify(v)); }
+  $('#addExpenseBtn').addEventListener('click',()=>{
+    const name=$('#expenseName').value.trim(), amount=Number($('#expenseAmount').value);
+    if(!name || !amount) return alert('請填寫品項與金額');
+    const arr=getExpenses();
+    arr.unshift({id:Date.now(),name,amount,photo:photoData,date:new Date().toLocaleString('zh-TW')});
+    try { setExpenses(arr); }
+    catch(e){ return alert('照片或記帳資料超過瀏覽器儲存容量，請刪除部分紀錄後再試。'); }
+    $('#expenseName').value=''; $('#expenseAmount').value=''; $('#expensePhoto').value=''; photoData=''; $('#photoPreview').classList.add('hidden');
+    renderExpenses();
+  });
+  function deleteExpense(id){ const arr=getExpenses().filter(x=>x.id!==id); setExpenses(arr); renderExpenses(); }
+  function renderExpenses(){
+    const arr=getExpenses(), total=arr.reduce((s,x)=>s+x.amount,0);
+    $('#expenseTotal').innerHTML = `<div class="font-bold">¥ ${money(total)}</div><div class="text-maple">NT$ ${money(total*rate)}</div>`;
+    $('#expenseList').innerHTML = arr.length ? arr.map(x=>`
+      <div class="flex gap-3 p-3 rounded-2xl bg-cream">
+        ${x.photo ? `<img src="${x.photo}" class="w-16 h-16 rounded-xl object-cover" alt="記帳照片">` : `<div class="w-16 h-16 rounded-xl bg-mist grid place-items-center text-moss"><i class="fa-solid fa-receipt"></i></div>`}
+        <div class="flex-1 min-w-0">
+          <p class="font-semibold truncate">${escapeHTML(x.name)}</p>
+          <p class="text-sm mt-1">¥ ${money(x.amount)} <span class="text-maple">・ NT$ ${money(x.amount*rate)}</span></p>
+          <p class="text-[10px] text-black/35 mt-1">${x.date}</p>
+        </div>
+        <button onclick="deleteExpense(${x.id})" class="text-black/25 px-2"><i class="fa-solid fa-trash"></i></button>
+      </div>`).join('') : `<div class="text-center text-sm text-black/35 py-8"><i class="fa-solid fa-wallet text-2xl mb-2"></i><p>還沒有支出紀錄</p></div>`;
+  }
+
+  // CHECKLIST
+  function initChecklist(){
+    if(!localStorage.getItem('trip_checklist')) localStorage.setItem('trip_checklist', JSON.stringify(checklistDefaults.map((t,i)=>({id:Date.now()+i,text:t,done:false}))));
+  }
+  function getChecklist(){ return JSON.parse(localStorage.getItem('trip_checklist')||'[]'); }
+  function setChecklist(v){ localStorage.setItem('trip_checklist',JSON.stringify(v)); }
+  function toggleCheck(id){ const arr=getChecklist(); const x=arr.find(i=>i.id===id); if(x)x.done=!x.done; setChecklist(arr); renderChecklist(); }
+  function deleteCheck(id){ setChecklist(getChecklist().filter(i=>i.id!==id)); renderChecklist(); }
+  function renderChecklist(){
+    const arr=getChecklist(), done=arr.filter(x=>x.done).length;
+    $('#checkProgress').textContent = `${done}/${arr.length} 完成`;
+    $('#checklist').innerHTML = arr.map(x=>`
+      <div class="check-item flex items-center gap-3 p-3 rounded-2xl bg-cream">
+        <input type="checkbox" ${x.done?'checked':''} onchange="toggleCheck(${x.id})" class="w-5 h-5 accent-[#586658]">
+        <span class="flex-1 text-sm">${escapeHTML(x.text)}</span>
+        <button onclick="deleteCheck(${x.id})" class="text-black/20"><i class="fa-solid fa-xmark"></i></button>
+      </div>`).join('');
+  }
+  $('#addChecklistBtn').addEventListener('click',()=>{
+    const t=$('#newChecklistItem').value.trim(); if(!t)return;
+    const arr=getChecklist(); arr.push({id:Date.now(),text:t,done:false}); setChecklist(arr); $('#newChecklistItem').value=''; renderChecklist();
+  });
+
+  // MEMOS
+  function getMemos(){ return JSON.parse(localStorage.getItem('trip_memos')||'[]'); }
+  function setMemos(v){ localStorage.setItem('trip_memos',JSON.stringify(v)); }
+  $('#addMemoBtn').addEventListener('click',()=>{
+    const text=$('#memoInput').value.trim(); if(!text)return;
+    const arr=getMemos(); arr.unshift({id:Date.now(),text}); setMemos(arr); $('#memoInput').value=''; renderMemos();
+  });
+  function isURL(s){ try { const u=new URL(s); return ['http:','https:'].includes(u.protocol); } catch{return false;} }
+  function deleteMemo(id){ setMemos(getMemos().filter(x=>x.id!==id)); renderMemos(); }
+  function renderMemos(){
+    const arr=getMemos();
+    $('#memoList').innerHTML = arr.length ? arr.map(x=> isURL(x.text) ? `
+      <div class="p-3 rounded-2xl bg-cream flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-mist grid place-items-center text-moss"><i class="fa-solid fa-link"></i></div>
+        <a href="${escapeAttr(x.text)}" target="_blank" class="flex-1 text-sm font-semibold break-all text-moss">開啟連結</a>
+        <button onclick="deleteMemo(${x.id})" class="text-black/25"><i class="fa-solid fa-trash"></i></button>
+      </div>` : `
+      <div class="p-4 rounded-2xl bg-cream flex gap-3">
+        <p class="flex-1 text-sm leading-6 whitespace-pre-wrap">${escapeHTML(x.text)}</p>
+        <button onclick="deleteMemo(${x.id})" class="text-black/25"><i class="fa-solid fa-trash"></i></button>
+      </div>`).join('') : `<p class="text-center text-sm text-black/35 py-6">尚無備忘錄</p>`;
+  }
+
+  function escapeHTML(s){ return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+  function escapeAttr(s){ return String(s).replace(/"/g,'&quot;'); }
+
+  renderDays(); initChecklist(); renderChecklist(); renderMemos(); renderExpenses();
+</script>
+</body>
+</html>
