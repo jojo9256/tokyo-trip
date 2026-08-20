@@ -1097,6 +1097,25 @@
     chevron?.classList.toggle('rotate-180', isOpening);
   }
 
+  const GUIDE_PHOTOS = {
+  "nasu-kingdom": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Nasu%20Animal%20Kingdom%2020091101%200906.jpg?width=1200",
+  "heisei-forest": "https://commons.wikimedia.org/wiki/Special:Redirect/file/180727%20Nasu%20Heisei-no-mori%20Forest%20Nasu%20Japan08.JPG?width=1200",
+  "nasu-yumoto": "https://commons.wikimedia.org/wiki/Special:Redirect/file/180727%20Sessho-seki%20Nasu%20Japan15.JPG?width=1200",
+  "oyama-sando": "https://gazoo.com/-/media/TMC/gazoo/drive/mura/20/11/13/02.jpg?h=633&hash=74803589D76678D2404DD4CB98961C9C&la=ja-JP&rev=969d8d941fbf451ea838adbf1f24b1d8&w=844",
+  "senbonmatsu": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Banzaikaku%2C%20Senbonmatsu%20Farm.jpg?width=1200",
+  "momijidani-bridge": "https://forestpost-jp.com/wp-content/uploads/2021/11/shiobarakoyo8.jpg",
+  "mikaeri-ryuka": "https://pimg.1px.tw/aliciaisme/1761893842-4256693084-g.jpg",
+  "shiobara-onsen": "https://johncooperworks.up.seesaa.net/00210709N000000002/144706800946941717179_kurrnai_DP3M0832-thumbnail2.jpg",
+  "chuzenji-kegon": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Kegon%20Falls%201.jpg?width=1200",
+  "ryuzu": "https://commons.wikimedia.org/wiki/Special:Redirect/file/%E7%AB%9C%E9%A0%AD%E3%81%AE%E6%BB%9D.jpg?width=1200",
+  "senjogahara-yudaki": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Senjogahara%20-%20autumn%20-%20oct%2029%202021%20various%2018%2054%2045%20718000.jpeg?width=1200",
+  "toshogu": "https://www.mapple.net/articles/cms/wp-content/uploads/2022/04/030_tochigi_000-123RF.jpg",
+  "momiji-corridor": "https://yaktour.co/wp-content/uploads/2025/07/momiji-corridor-kawaguchiko-autumn-2025.jpg",
+  "shiraito-otodome": "https://ak-d.tripcdn.com/images/1mi6p2215g2ado5uo60A6.jpg?proc=source%2Ftrip",
+  "fuji-dream-bridge": "https://stat.ameba.jp/user_images/20231122/22/fujihappyspot/c9/83/j/o0700048215367808152.jpg",
+  "fuji-whc": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Mt.Fuji%20World%20Heritage%20Centre%2CShizuoka.jpg?width=1200"
+};
+
   function renderGuide(){
     const box=$('#guideCards');
     if(!box) return;
@@ -1104,10 +1123,10 @@
     box.innerHTML = guideGuide.map(g=>{
       const dayHeader = g.day!==lastDay ? `<div class="pt-1 pb-1"><div class="flex items-center gap-3"><span class="px-3 py-1.5 rounded-full bg-maple text-white text-xs font-bold">${g.day}・${g.date}</span><div class="h-px flex-1 bg-sand/60"></div></div></div>` : '';
       lastDay=g.day;
-      const img=(typeof WEATHER_PHOTOS!=='undefined' && WEATHER_PHOTOS[g.photoDate]) ? WEATHER_PHOTOS[g.photoDate] : '';
+      const img = GUIDE_PHOTOS[g.id] || '';
       return `${dayHeader}
       <article id="guide-${g.id}" class="bg-paper rounded-[28px] overflow-hidden shadow-soft scroll-mt-28">
-        ${img ? `<div class="relative h-48 overflow-hidden"><img src="${img}" alt="${g.title}" class="w-full h-full object-cover" loading="lazy" decoding="async" fetchpriority="low"><div class="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent"></div><div class="absolute left-5 right-5 bottom-4 text-white"><p class="text-[10px] tracking-[0.2em] font-semibold">${g.day}・${g.date}｜${g.area}</p><h3 class="font-serifjp text-2xl mt-1">${g.title}</h3></div></div>` : `<div class="p-5 pb-3"><p class="text-[10px] tracking-[0.2em] text-maple font-semibold">${g.day}・${g.date}｜${g.area}</p><h3 class="font-serifjp text-2xl mt-1">${g.title}</h3></div>`}
+        ${img ? `<div class="relative h-48 overflow-hidden"><img src="${img}" alt="${g.title}" class="w-full h-full object-cover" loading="lazy" decoding="async" fetchpriority="low" referrerpolicy="no-referrer"><div class="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent"></div><div class="absolute left-5 right-5 bottom-4 text-white"><p class="text-[10px] tracking-[0.2em] font-semibold">${g.day}・${g.date}｜${g.area}</p><h3 class="font-serifjp text-2xl mt-1">${g.title}</h3></div></div>` : `<div class="p-5 pb-3"><p class="text-[10px] tracking-[0.2em] text-maple font-semibold">${g.day}・${g.date}｜${g.area}</p><h3 class="font-serifjp text-2xl mt-1">${g.title}</h3></div>`}
         <div class="p-5 space-y-4">
           <p class="text-sm leading-7 text-black/70">${g.intro}</p>
           <div class="rounded-2xl bg-cream p-4">
