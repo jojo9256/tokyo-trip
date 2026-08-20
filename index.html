@@ -512,6 +512,7 @@
     <!-- HOTEL DETAIL MODAL -->
     <div id="hotelModal" class="fixed inset-0 z-[80] hidden">
       <div class="absolute inset-0 bg-black/45 backdrop-blur-[2px]" onclick="closeHotelModal()"></div>
+
       <div class="absolute inset-x-0 bottom-0 max-h-[88vh] overflow-y-auto rounded-t-[30px] bg-paper shadow-2xl">
         <div class="sticky top-0 z-10 bg-paper/95 backdrop-blur border-b border-black/5 px-5 py-4 flex items-center justify-between">
           <div>
@@ -524,14 +525,14 @@
         </div>
 
         <div class="p-5 space-y-4">
-          <div id="hotelRoomPhotoWrap" class="rounded-[22px] overflow-hidden bg-cream min-h-[150px] grid place-items-center">
+          <div id="hotelRoomPhotoWrap" class="rounded-[22px] overflow-hidden bg-cream min-h-[155px] grid place-items-center">
             <div class="text-center text-black/30 py-8">
               <i class="fa-regular fa-image text-3xl"></i>
               <p class="text-xs mt-2">房型照片稍後補上</p>
             </div>
           </div>
 
-          <div class="rounded-[22px] border border-sand/50 overflow-hidden">
+          <div class="rounded-[22px] border border-sand/50 overflow-hidden bg-white">
             <div class="p-4 border-b border-black/5">
               <p class="text-[10px] tracking-[0.16em] text-black/35">RESERVATION</p>
               <p class="text-xs text-black/45 mt-2">訂房代號</p>
@@ -540,10 +541,12 @@
 
             <a id="hotelModalPhone" href="#" class="p-4 border-b border-black/5 flex items-center justify-between gap-3">
               <div>
-                <p class="text-[10px] tracking-[0.16em] text-black/35">PHONE</p>
+                <p class="text-[10px] tracking-[0.16em] text-black/35">CAR GPS PHONE</p>
                 <p id="hotelModalPhoneText" class="font-semibold mt-1">—</p>
               </div>
-              <span class="w-10 h-10 rounded-full bg-ink text-white grid place-items-center"><i class="fa-solid fa-phone"></i></span>
+              <span class="w-10 h-10 rounded-full bg-ink text-white grid place-items-center">
+                <i class="fa-solid fa-phone"></i>
+              </span>
             </a>
 
             <div class="p-4">
@@ -597,7 +600,7 @@
       ]
     },
     {
-      day:'D2', date:'11/15', title:'宇都宮 → 那須高原', hotel:'Hotel Epinard Nasu 那須温泉酒店', booking:['5609303520'], hotelPhone:'0287-78-6000', hotelAddress:'〒325-0302 栃木県那須郡那須町大字高久丙1番地', hotelMap:'ホテルエピナール那須',
+      day:'D2', date:'11/15', title:'宇都宮 → 那須高原', hotel:'Hotel Epinard Nasu 那須温泉酒店', booking:['5609303520'], hotelPhone:'0287-78-6000', hotelAddress:'〒325-0302 栃木県那須郡那須町高久丙1', hotelMap:'ホテルエピナール那須',
       items:[
         {time:'上午', text:'那須動物王國', map:'那須動物王國', food:true, guideRef:'nasu-kingdom'},
         {time:'午餐', text:'園區內解決'},
@@ -626,7 +629,7 @@
       ]
     },
     {
-      day:'D5', date:'11/18', title:'奧日光 → 河口湖', hotel:'湖山亭', booking:['TDF45A0467329','T7816581E4EF3'], hotelPhone:'0555-72-1145', hotelAddress:'〒401-0303 山梨県南都留郡富士河口湖町浅川10', hotelMap:'うぶや 河口湖',
+      day:'D5', date:'11/18', title:'奧日光 → 河口湖', hotel:'湖山亭', booking:['TDF45A0467329','T7816581E4EF3'], hotelPhone:'0555-72-1145', hotelAddress:'〒401-0303 山梨県南都留郡富士河口湖町浅川10', hotelMap:'湖山亭うぶや',
       items:[
         {time:'早上', text:'日光東照宮', map:'日光東照宮', guideRef:'toshogu'},
         {time:'中午', text:'高速公路休息站，或下交流道找餐廳'},
@@ -1027,9 +1030,7 @@
                   </div>
                 </div>
                 ${(i.map || i.foodRef || i.guideRef) ? `<div class="flex gap-2 mt-3 flex-wrap">
-                  ${i.map ? `<div class="flex justify-center">
-              <a target="_blank" href="${mapLink(g.map || g.title)}" class="px-6 py-3 rounded-2xl bg-ink text-white text-xs font-semibold text-center"><i class="fa-solid fa-location-dot mr-2"></i>Google Maps</a>
-            </div>` : ''}
+                  ${i.map ? `<a target="_blank" href="${mapLink(i.map)}" class="px-3 py-1.5 rounded-full bg-white text-moss text-[11px] font-semibold"><i class="fa-solid fa-location-dot mr-1"></i>Google Maps</a>` : ''}
                   ${i.foodRef ? `<button onclick="goToFood('${i.foodRef}')" class="px-3 py-1.5 rounded-full bg-maple text-white text-[11px] font-semibold"><i class="fa-solid fa-utensils mr-1"></i>美食推薦</button>` : ''}
                   ${i.guideRef ? `<button onclick="goToGuide('${i.guideRef}')" class="px-3 py-1.5 rounded-full bg-moss text-white text-[11px] font-semibold"><i class="fa-solid fa-book-open mr-1"></i>景點導覽</button>` : ''}
                 </div>`:''}
@@ -1045,6 +1046,7 @@
     }).join('');
   }
 
+
   function openHotelModal(day){
     const d=tripDays.find(x=>x.day===day);
     if(!d) return;
@@ -1056,8 +1058,7 @@
     $('#hotelModalAddress').textContent=d.hotelAddress || '—';
     $('#hotelModalMap').href=mapLink(d.hotelMap || d.hotel);
 
-    const modal=$('#hotelModal');
-    modal.classList.remove('hidden');
+    $('#hotelModal').classList.remove('hidden');
     document.body.style.overflow='hidden';
   }
 
@@ -1095,9 +1096,8 @@
             <p class="text-xs font-bold text-moss"><i class="fa-solid fa-triangle-exclamation mr-2"></i>行程注意</p>
             <p class="text-xs leading-6 text-black/60 mt-1">${g.elder}</p>
           </div>
-          <div class="grid grid-cols-2 gap-2">
-            <a target="_blank" href="${mapLink(g.map)}" class="rounded-2xl bg-ink text-white py-3 text-center text-xs font-semibold"><i class="fa-solid fa-location-dot mr-2"></i>Google Maps</a>
-            
+          <div class="flex justify-center">
+            <a target="_blank" href="${mapLink(g.map)}" class="px-6 py-3 rounded-2xl bg-ink text-white text-center text-xs font-semibold"><i class="fa-solid fa-location-dot mr-2"></i>Google Maps</a>
           </div>
         </div>
       </article>`;
