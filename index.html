@@ -740,7 +740,7 @@
     {
       id:'toshogu', day:'D5', date:'11/18', title:'日光東照宮', area:'日光', photoDate:'2026-11-17', map:'日光東照宮',
       intro:'日光東照宮祭祀江戶幕府初代將軍德川家康。和日本常見的素雅神社相比，這裡大量使用金箔、彩色雕刻與精細裝飾，是江戶初期權力與工藝的代表。',
-      story:'德川家康過世後被神格化，東照宮成為德川政權的重要象徵。著名的「三猿」——不看、不聽、不說——以及「眠貓」，都不是隨意裝飾，而是把人生觀與寓意藏進建築雕刻裡。',
+      story:'德川家康過世後被神格化，東照宮成為德川政權的重要象徵。著名的「三猿」與「眠貓」也把寓意藏進建築雕刻裡。三猿的「不看、不聽、不說」，常被解讀為教導年幼的人不要看、聽、說不好的事物，讓心保持純真；它也是神廄舍一系列猴子雕刻中描寫人生階段的一幕。眠貓看似安穩熟睡，而背面雕有嬉戲的麻雀，常被解讀為貓與雀能和平共處，象徵沒有戰亂、天下太平的理想。',
       points:['陽明門先看整體，再找細部雕刻','三猿與眠貓是最容易理解的代表故事','石階與人潮多，步伐放慢'],
       talk:'「東照宮供奉的是德川家康，也就是建立江戶幕府的人。這裡故意蓋得非常華麗，代表德川家的權威。等一下可以特別找三隻猴子——不看、不聽、不說——還有很有名的眠貓，這些雕刻其實都在講人生道理。」',
       elder:'境內石階、人潮都多，推車未必每一區都方便，可準備揹巾。早上從奧日光下山會走第一いろは坂，為單向下坡連續彎道，控制車速、使用引擎煞車，不要長時間踩住煞車。'
@@ -1110,11 +1110,16 @@
   "ryuzu": "https://commons.wikimedia.org/wiki/Special:Redirect/file/%E7%AB%9C%E9%A0%AD%E3%81%AE%E6%BB%9D.jpg?width=1200",
   "senjogahara-yudaki": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Senjogahara%20-%20autumn%20-%20oct%2029%202021%20various%2018%2054%2045%20718000.jpeg?width=1200",
   "toshogu": "https://www.mapple.net/articles/cms/wp-content/uploads/2022/04/030_tochigi_000-123RF.jpg",
-  "momiji-corridor": "https://yaktour.co/wp-content/uploads/2025/07/momiji-corridor-kawaguchiko-autumn-2025.jpg",
+  "momiji-corridor": "https://lake-kawaguchiko.com/images/season-autumn.png",
   "shiraito-otodome": "https://ak-d.tripcdn.com/images/1mi6p2215g2ado5uo60A6.jpg?proc=source%2Ftrip",
   "fuji-dream-bridge": "https://stat.ameba.jp/user_images/20231122/22/fujihappyspot/c9/83/j/o0700048215367808152.jpg",
   "fuji-whc": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Mt.Fuji%20World%20Heritage%20Centre%2CShizuoka.jpg?width=1200"
 };
+
+  const TOSHOGU_DETAIL_PHOTOS = {
+    monkeys: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/%E6%97%A5%E5%85%89%E6%9D%B1%E7%85%A7%E5%AE%AE%E4%B8%89%E7%8C%BF20240203-IMG_9271.jpg?width=1200',
+    sleepingCat: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/%E6%97%A5%E5%85%89%E6%9D%B1%E7%85%A7%E5%AE%AE%E7%9C%A0%E3%82%8A%E7%8C%AB20240203-IMG_9309.jpg?width=1200'
+  };
 
   function renderGuide(){
     const box=$('#guideCards');
@@ -1133,6 +1138,27 @@
             <p class="text-xs font-bold text-moss"><i class="fa-solid fa-book-open mr-2"></i>背景故事</p>
             <p class="text-sm leading-7 text-black/60 mt-2">${g.story}</p>
           </div>
+
+          ${g.id==='toshogu' ? `
+          <div class="space-y-3">
+            <p class="text-xs tracking-[0.16em] text-maple font-bold">代表雕刻</p>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="rounded-2xl overflow-hidden bg-cream">
+                <img src="${TOSHOGU_DETAIL_PHOTOS.monkeys}" alt="日光東照宮 三猿" class="w-full h-32 object-cover" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+                <div class="p-3">
+                  <p class="font-serifjp text-base">三猿</p>
+                  <p class="text-[11px] leading-5 text-black/50 mt-1">見ざる・言わざる・聞かざる</p>
+                </div>
+              </div>
+              <div class="rounded-2xl overflow-hidden bg-cream">
+                <img src="${TOSHOGU_DETAIL_PHOTOS.sleepingCat}" alt="日光東照宮 眠貓" class="w-full h-32 object-cover" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+                <div class="p-3">
+                  <p class="font-serifjp text-base">眠貓</p>
+                  <p class="text-[11px] leading-5 text-black/50 mt-1">國寶「眠り猫」</p>
+                </div>
+              </div>
+            </div>
+          </div>` : ''}
           <div>
             <p class="text-xs tracking-[0.16em] text-maple font-bold">現場可以看什麼</p>
             <div class="mt-2 space-y-2">${g.points.map(x=>`<div class="flex gap-2 text-sm leading-6 text-black/65"><i class="fa-solid fa-circle-check text-moss mt-1"></i><span>${x}</span></div>`).join('')}</div>
