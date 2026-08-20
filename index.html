@@ -260,11 +260,6 @@
 
       <!-- GUIDE -->
       <section id="guide" class="app-section space-y-5">
-        <div class="bg-paper rounded-[28px] p-5 shadow-soft">
-          <p class="text-xs tracking-[0.22em] text-maple font-semibold">TRAVEL GUIDE</p>
-          <h2 class="font-serifjp text-2xl mt-2">全家都能一起看的景點導覽</h2>
-          <p class="text-sm leading-7 text-black/65 mt-3">依實際前往日期排列。每一站都有背景故事、現場看點與「30 秒導遊講解」，另外整理親子同行與自駕時真正需要注意的事項。</p>
-        </div>
         <div class="bg-[#F3EFE7] rounded-[28px] p-5 shadow-soft border border-sand/40">
           <div class="flex items-center gap-2 text-maple">
             <i class="fa-solid fa-car-side"></i>
@@ -297,8 +292,9 @@
           <div class="mt-4">
             <label class="text-xs text-black/45">可輸入算式，例如 500+200*3</label>
             <div class="flex gap-2 mt-2">
-              <input id="calcInput" inputmode="decimal" placeholder="500+200*3" class="flex-1 bg-cream rounded-2xl px-4 py-3 text-lg font-semibold" />
-              <button id="calcBtn" class="w-14 rounded-2xl bg-maple text-white text-xl font-bold">=</button>
+              <input id="calcInput" inputmode="decimal" placeholder="500+200*3" class="min-w-0 flex-1 bg-cream rounded-2xl px-4 py-3 text-lg font-semibold" />
+              <button id="calcBtn" class="w-14 shrink-0 rounded-2xl bg-maple text-white text-xl font-bold">=</button>
+              <button id="calcClearBtn" type="button" class="w-14 shrink-0 rounded-2xl bg-moss text-white text-xs font-bold">清除</button>
             </div>
           </div>
           <div id="calcResult" class="mt-4 rounded-2xl bg-mist p-4 hidden"></div>
@@ -589,7 +585,7 @@
       ]
     },
     {
-      day:'D3', date:'11/16', title:'那須高原 → 那須鹽原', hotel:'日光ガーデンホテル', booking:[], hotelPhotos:['hotel-nikko-garden-01.jpg','hotel-nikko-garden-02.jpg'], roomType:'客房／露天風呂', hotelPhone:'0287-46-5802', hotelAddress:'〒329-2921 栃木県那須塩原市塩原1330', hotelMap:'日光ガーデンホテル',
+      day:'D3', date:'11/16', title:'那須高原 → 那須鹽原', hotel:'日光ガーデンホテル', booking:['6995978070'], hotelPhotos:['hotel-nikko-garden-01.jpg','hotel-nikko-garden-02.jpg'], roomType:'客房／露天風呂', hotelPhone:'0287-46-5802', hotelAddress:'〒329-2921 栃木県那須塩原市塩原1330', hotelMap:'日光ガーデンホテル',
       items:[
         {time:'上午', text:'大山公園・紅葉參道', map:'大山参道 那須塩原', guideRef:'oyama-sando'},
         {time:'中午', text:'千本松牧場午餐', map:'千本松牧場', food:true, foodRef:'D3-0', guideRef:'senbonmatsu'},
@@ -1564,6 +1560,13 @@
     } catch(err){ alert(err.message); }
   });
 
+  $('#calcClearBtn').addEventListener('click', () => {
+    $('#calcInput').value = '';
+    $('#calcResult').innerHTML = '';
+    $('#calcResult').classList.add('hidden');
+    $('#calcInput').focus();
+  });
+
   let selectedPayer = localStorage.getItem('trip_last_payer') || '';
 
   function renderPayerButtons(){
@@ -1670,14 +1673,24 @@
     }
   });
   async function deleteExpense(id){
+    if(!id) return;
     if(!confirm('確定刪除這筆共用記帳嗎？')) return;
     try{
       await deleteCloudExpense(id);
     }catch(e){
       console.error(e);
-      alert('刪除失敗，請確認網路後再試');
+      alert('刪除失敗：' + (e?.message || '請確認網路後再試'));
     }
   }
+
+  // 支出列表會由 renderExpenses() 反覆重畫，因此用事件委派處理垃圾桶。
+  document.addEventListener('click', (e)=>{
+    const btn=e.target.closest('[data-expense-delete]');
+    if(!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    deleteExpense(btn.dataset.expenseDelete);
+  });
   function expenseDateKey(x){
     if(x.dateKey) return x.dateKey;
     // 舊資料沒有 dateKey 時，盡量從原本顯示日期解析。
@@ -1781,7 +1794,7 @@
           <p class="text-sm mt-1">¥ ${money(x.amount)} <span class="text-maple">・ NT$ ${money(x.amount*rate)}</span></p>
           <p class="text-[10px] text-black/35 mt-1">${x.date}</p>
         </div>
-        <button onclick="deleteExpense(\'${x.id}\')" class="text-black/25 px-2"><i class="fa-solid fa-trash"></i></button>
+        <button type="button" data-expense-delete="${x.id}" class="expense-delete-btn text-black/25 px-3 py-3 -mr-2 rounded-xl active:bg-black/5" aria-label="刪除這筆支出"><i class="fa-solid fa-trash pointer-events-none"></i></button>
       </div>`).join('') : `<div class="text-center text-sm text-black/35 py-8"><i class="fa-solid fa-wallet text-2xl mb-2"></i><p>還沒有支出紀錄</p></div>`);
   }
 
