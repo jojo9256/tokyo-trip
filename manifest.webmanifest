@@ -1,0 +1,29 @@
+{
+  "name": "2026東京河口湖",
+  "short_name": "2026東京河口湖",
+  "start_url": "/tokyo-trip/",
+  "scope": "/tokyo-trip/",
+  "display": "standalone",
+  "background_color": "#F5F1E8",
+  "theme_color": "#F5F1E8",
+  "icons": [
+    {
+      "src": "/tokyo-trip/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/tokyo-trip/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/tokyo-trip/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
