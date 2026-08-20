@@ -358,7 +358,10 @@
             <p><b>富士山周邊：</b>11 月中旬起部分通往五合目的山路通常進入冬季封閉期。河口湖、富士宮、御殿場之間移動時，以一般主要道路導航為主，出發前再看官方道路資訊。</p>
           </div>
         </div>
-        <div id="guideCards" class="space-y-5"></div>
+        <div class="mt-2">
+          <div id="guideDayTabs" class="flex overflow-x-auto hide-scrollbar border-b border-black/5 px-1 scroll-smooth"></div>
+          <div id="guideCards" class="space-y-5 mt-4"></div>
+        </div>
       </section>
 
       <!-- WALLET -->
@@ -1196,13 +1199,22 @@
     sleepingCat: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/%E6%97%A5%E5%85%89%E6%9D%B1%E7%85%A7%E5%AE%AE%E7%9C%A0%E3%82%8A%E7%8C%AB20240203-IMG_9309.jpg?width=1200'
   };
 
+  let activeGuideDay = sessionStorage.getItem('activeGuideDay') || 'D2';
   function renderGuide(){
     const box=$('#guideCards');
-    if(!box) return;
-    let lastDay='';
-    box.innerHTML = guideGuide.map(g=>{
-      const dayHeader = g.day!==lastDay ? `<div class="pt-1 pb-1"><div class="flex items-center gap-3"><span class="px-3 py-1.5 rounded-full bg-maple text-white text-xs font-bold">${g.day}・${g.date}</span><div class="h-px flex-1 bg-sand/60"></div></div></div>` : '';
-      lastDay=g.day;
+    const tabs=$('#guideDayTabs');
+    if(!box || !tabs) return;
+    const guideDays=[...new Set(guideGuide.map(g=>g.day))];
+    if(!guideDays.includes(activeGuideDay)) activeGuideDay=guideDays[0];
+    tabs.innerHTML=guideDays.map(day=>{
+      const d=tripDays.find(x=>x.day===day);
+      const active=day===activeGuideDay;
+      const weekday=['SUN','MON','TUE','WED','THU','FRI','SAT'][new Date(`${getTripDayKey(d)}T12:00:00`).getDay()];
+      return `<button type="button" onclick="selectGuideDay('${day}')" data-guide-tab="${day}" class="relative z-10 shrink-0 min-w-[72px] px-3 py-3 text-center border-b-2 ${active?'border-maple text-ink':'border-transparent text-black/30'}"><p class="text-[10px] font-bold tracking-[0.08em]">${weekday}</p><p class="font-serifjp text-xl leading-none mt-1">${d.date.split('/')[1]}</p></button>`;
+    }).join('');
+    const visibleGuides=guideGuide.filter(g=>g.day===activeGuideDay);
+    box.innerHTML = visibleGuides.map(g=>{
+      const dayHeader='';
       const img = GUIDE_PHOTOS[g.id] || '';
       return `${dayHeader}
       <article id="guide-${g.id}" class="bg-paper rounded-[28px] overflow-hidden shadow-soft scroll-mt-28">
@@ -1309,10 +1321,14 @@
       </article>`).join('');
   }
 
+  function selectGuideDay(day){ activeGuideDay=day; sessionStorage.setItem('activeGuideDay',day); renderGuide(); }
+
   function goToGuide(ref){
     // Remember where the user was in PLAN before jumping to GUIDE.
     tabScrollPositions.plan = window.scrollY || window.pageYOffset || 0;
     currentTab = 'guide';
+    const targetGuide=guideGuide.find(g=>g.id===ref);
+    if(targetGuide){ activeGuideDay=targetGuide.day; sessionStorage.setItem('activeGuideDay',activeGuideDay); }
 
     const guideTab=document.querySelector('.tab-btn[data-target="guide"]');
     if(guideTab){
@@ -1323,6 +1339,7 @@
     $('#guide').classList.add('active');
     $('#pageTitle').textContent='深度導覽';
     initPageOnDemand('guide');
+    renderGuide();
     setTimeout(()=>{
       const target=document.getElementById('guide-'+ref);
       if(target){
