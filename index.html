@@ -384,6 +384,15 @@
               <button id="calcBtn" class="w-14 shrink-0 rounded-2xl bg-maple text-white text-xl font-bold">=</button>
               <button id="calcClearBtn" type="button" class="w-14 shrink-0 rounded-2xl bg-moss text-white text-xs font-bold">清除</button>
             </div>
+            <div class="grid grid-cols-4 gap-2 mt-2" id="calcOperators">
+              <button type="button" data-op="+" class="rounded-xl bg-cream py-2 text-lg font-bold text-moss">＋</button>
+              <button type="button" data-op="-" class="rounded-xl bg-cream py-2 text-lg font-bold text-moss">−</button>
+              <button type="button" data-op="*" class="rounded-xl bg-cream py-2 text-lg font-bold text-moss">×</button>
+              <button type="button" data-op="/" class="rounded-xl bg-cream py-2 text-lg font-bold text-moss">÷</button>
+            </div>
+            <button id="useCalcAmountBtn" type="button" class="w-full mt-2 rounded-2xl bg-mist text-moss py-3 text-sm font-bold">
+              <i class="fa-solid fa-arrow-down mr-2"></i>帶入下方記帳金額
+            </button>
           </div>
           <div id="calcResult" class="mt-4 rounded-2xl bg-mist p-4 hidden"></div>
         </div>
@@ -1610,16 +1619,18 @@
 
   function updateWeatherTabUI(){
     $$('.weather-region').forEach(b=>{
-      const a=b.dataset.region===currentWeatherRegion;
-      b.classList.toggle('bg-ink',a);
-      b.classList.toggle('text-white',a);
-      b.classList.toggle('bg-cream',!a);
-      b.classList.toggle('text-black/55',!a);
+      const active=b.dataset.region===currentWeatherRegion;
+      b.className = `weather-region px-3 py-2 rounded-full text-xs whitespace-nowrap transition-colors duration-150 ${active ? 'bg-ink text-white' : 'bg-cream text-black/55'}`;
+      b.setAttribute('aria-pressed', active ? 'true' : 'false');
     });
   }
 
   $$('.weather-region').forEach(b=>b.addEventListener('click',()=>{
     currentWeatherRegion=b.dataset.region;
+
+    // 先立即更新按鈕顏色，不必等天氣 API 回傳。
+    updateWeatherTabUI();
+
     const cfg=WEATHER_REGIONS[currentWeatherRegion];
     $('#weatherCity').textContent=cfg.city;
     $('#weatherPlaceTitle').textContent=cfg.label;
@@ -1643,9 +1654,12 @@
     if(!Number.isFinite(result)) throw new Error('算式無效');
     return result;
   }
+  let lastCalcJPY = null;
+
   $('#calcBtn').addEventListener('click', () => {
     try {
       const jpy = safeEval($('#calcInput').value);
+      lastCalcJPY = jpy;
       const twd = jpy * rate;
       $('#calcResult').classList.remove('hidden');
       $('#calcResult').innerHTML = `<div class="flex justify-between items-end"><div><p class="text-xs text-black/45">計算結果</p><p class="text-2xl font-bold mt-1">¥ ${money(jpy)}</p></div><div class="text-right"><p class="text-xs text-black/45">約合台幣</p><p class="text-lg font-bold text-maple">NT$ ${money(twd)}</p></div></div>`;
@@ -1656,7 +1670,35 @@
     $('#calcInput').value = '';
     $('#calcResult').innerHTML = '';
     $('#calcResult').classList.add('hidden');
+    lastCalcJPY = null;
     $('#calcInput').focus();
+  });
+
+  $('#useCalcAmountBtn').addEventListener('click', () => {
+    try {
+      const amount = lastCalcJPY ?? safeEval($('#calcInput').value);
+      lastCalcJPY = amount;
+      $('#expenseAmount').value = amount;
+      $('#expenseAmount').dispatchEvent(new Event('input', {bubbles:true}));
+      $('#expenseAmount').scrollIntoView({behavior:'smooth', block:'center'});
+      setTimeout(()=>$('#expenseAmount').focus(), 250);
+    } catch(err){
+      alert('請先完成上方算式計算');
+    }
+  });
+
+  // iPhone 的數字鍵盤沒有運算符號，因此提供網頁內的 + − × ÷ 快捷鍵。
+  $('#calcOperators').addEventListener('pointerdown', (e) => {
+    const btn=e.target.closest('[data-op]');
+    if(!btn) return;
+    e.preventDefault(); // 保持輸入框與數字鍵盤開啟
+    const input=$('#calcInput');
+    const op=btn.dataset.op;
+    const start=input.selectionStart ?? input.value.length;
+    const end=input.selectionEnd ?? start;
+    input.setRangeText(op, start, end, 'end');
+    input.dispatchEvent(new Event('input', {bubbles:true}));
+    input.focus({preventScroll:true});
   });
 
   let selectedPayer = localStorage.getItem('trip_last_payer') || '';
