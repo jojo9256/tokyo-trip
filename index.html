@@ -404,11 +404,7 @@
             <input id="expenseName" placeholder="品項，例如：宇都宮餃子" class="w-full bg-cream rounded-2xl px-4 py-3" />
             <input id="expenseAmount" type="number" inputmode="decimal" placeholder="日幣金額 JPY" class="w-full bg-cream rounded-2xl px-4 py-3" />
             <div>
-              <div class="flex items-center justify-between">
-                <label class="text-xs text-black/45">分類</label>
-                <span id="categoryHint" class="text-[10px] text-black/35">快速選擇</span>
-              </div>
-              <div id="expenseCategories" class="flex gap-2 overflow-x-auto hide-scrollbar mt-2">
+              <div id="expenseCategories" class="flex gap-2 overflow-x-auto hide-scrollbar">
                 <button type="button" data-category="餐飲" class="expense-category shrink-0 px-3 py-2 rounded-full bg-ink text-white text-xs">餐飲</button>
                 <button type="button" data-category="交通" class="expense-category shrink-0 px-3 py-2 rounded-full bg-cream text-black/55 text-xs">交通</button>
                 <button type="button" data-category="購物" class="expense-category shrink-0 px-3 py-2 rounded-full bg-cream text-black/55 text-xs">購物</button>
@@ -1023,30 +1019,6 @@
     return [...tripDays.slice(idx), ...tripDays.slice(0,idx)];
   }
 
-  function syncTripDay(day, source='plan', refreshWeather=true){
-    const d=tripDays.find(x=>x.day===day);
-    if(!d) return;
-
-    activePlanDay=day;
-    sessionStorage.setItem('activePlanDay',day);
-
-    // GUIDE 只有有景點資料的日期才同步切換。
-    if(typeof activeGuideDay!=='undefined' && guideGuide.some(g=>g.day===day)){
-      activeGuideDay=day;
-      sessionStorage.setItem('activeGuideDay',day);
-      if(source!=='guide' && document.getElementById('guideDayTabs')) renderGuide();
-    }
-
-    const dateKey=getTripDayKey(d);
-    selectedWeatherDate=dateKey;
-    const meta=weatherMetaForDate(dateKey);
-    currentWeatherRegion=meta.region;
-    localStorage.setItem('trip_weather_region',currentWeatherRegion);
-    renderWeatherDateTabs();
-    updateWeatherTabUI();
-    if(refreshWeather) fetchWeather(currentWeatherRegion,true);
-  }
-
   let activePlanDay = sessionStorage.getItem('activePlanDay') || 'D1';
 
 
@@ -1187,7 +1159,8 @@
   })();
 
   function selectPlanDay(day){
-    syncTripDay(day,'plan',true);
+    activePlanDay=day;
+    sessionStorage.setItem('activePlanDay',day);
     renderDays();
   }
 
@@ -1437,7 +1410,6 @@
   function selectGuideDay(day){
     activeGuideDay=day;
     sessionStorage.setItem('activeGuideDay',day);
-    syncTripDay(day,'guide',true);
     renderGuide();
   }
 
@@ -1634,17 +1606,6 @@
     }).join('');
     $$('.weather-date').forEach(b=>b.addEventListener('click',()=>{
       selectedWeatherDate=b.dataset.date;
-      const d=tripDays.find(x=>getTripDayKey(x)===selectedWeatherDate);
-      if(d){
-        activePlanDay=d.day;
-        sessionStorage.setItem('activePlanDay',d.day);
-        if(typeof activeGuideDay!=='undefined' && guideGuide.some(g=>g.day===d.day)){
-          activeGuideDay=d.day;
-          sessionStorage.setItem('activeGuideDay',d.day);
-        }
-        renderDays();
-        if(document.getElementById('guideDayTabs')) renderGuide();
-      }
       const meta=weatherMetaForDate(selectedWeatherDate);
       currentWeatherRegion=meta.region;
       renderWeatherDateTabs();
@@ -1820,6 +1781,29 @@
     input.dispatchEvent(new Event('input', {bubbles:true}));
     input.focus({preventScroll:true});
   });
+
+  let selectedCategory = localStorage.getItem('trip_expense_category') || '餐飲';
+
+  function updateCategoryUI(){
+    $$('.expense-category').forEach(btn=>{
+      const active=btn.dataset.category===selectedCategory;
+      btn.classList.toggle('bg-ink', active);
+      btn.classList.toggle('text-white', active);
+      btn.classList.toggle('bg-cream', !active);
+      btn.classList.toggle('text-black/55', !active);
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+  }
+
+  document.getElementById('expenseCategories')?.addEventListener('click', e=>{
+    const btn=e.target.closest('.expense-category');
+    if(!btn) return;
+    selectedCategory=btn.dataset.category;
+    localStorage.setItem('trip_expense_category',selectedCategory);
+    updateCategoryUI();
+  });
+
+  updateCategoryUI();
 
   let selectedPayer = localStorage.getItem('trip_last_payer') || '';
 
