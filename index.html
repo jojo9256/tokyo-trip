@@ -403,6 +403,19 @@
           <div class="space-y-3 mt-4">
             <input id="expenseName" placeholder="品項，例如：宇都宮餃子" class="w-full bg-cream rounded-2xl px-4 py-3" />
             <input id="expenseAmount" type="number" inputmode="decimal" placeholder="日幣金額 JPY" class="w-full bg-cream rounded-2xl px-4 py-3" />
+            <div>
+              <div class="flex items-center justify-between">
+                <label class="text-xs text-black/45">分類</label>
+                <span id="categoryHint" class="text-[10px] text-black/35">快速選擇</span>
+              </div>
+              <div id="expenseCategories" class="flex gap-2 overflow-x-auto hide-scrollbar mt-2">
+                <button type="button" data-category="餐飲" class="expense-category shrink-0 px-3 py-2 rounded-full bg-ink text-white text-xs">餐飲</button>
+                <button type="button" data-category="交通" class="expense-category shrink-0 px-3 py-2 rounded-full bg-cream text-black/55 text-xs">交通</button>
+                <button type="button" data-category="購物" class="expense-category shrink-0 px-3 py-2 rounded-full bg-cream text-black/55 text-xs">購物</button>
+                <button type="button" data-category="門票" class="expense-category shrink-0 px-3 py-2 rounded-full bg-cream text-black/55 text-xs">門票</button>
+                <button type="button" data-category="住宿" class="expense-category shrink-0 px-3 py-2 rounded-full bg-cream text-black/55 text-xs">住宿</button>
+              </div>
+            </div>
 
             <div>
               <div class="flex items-center justify-between">
@@ -437,6 +450,7 @@
                 <i class="fa-solid fa-cloud-arrow-up"></i><span>連線中...</span>
               </div>
               <div id="walletAuthError" class="hidden mt-1 max-w-[250px] text-[9px] leading-relaxed text-maple/80 break-words"></div>
+              <div id="todayExpenseSummary" class="mt-2 text-xs font-semibold text-moss"></div>
             </div>
             <div id="expenseTotal" class="text-right text-sm"></div>
           </div>
@@ -541,9 +555,21 @@
             <div class="text-center text-black/30 py-8"><i class="fa-regular fa-image text-3xl"></i><p class="text-xs mt-2">房型照片稍後補上</p></div>
           </div>
           <div class="rounded-[22px] border border-sand/50 overflow-hidden bg-white">
-            <div class="p-4 border-b border-black/5"><p class="text-[10px] tracking-[0.16em] text-black/35">RESERVATION</p><p class="text-xs text-black/45 mt-2">訂房代號</p><div id="hotelModalBooking" class="font-semibold mt-1 break-all">—</div></div>
+            <div class="p-4 border-b border-black/5">
+              <p class="text-[10px] tracking-[0.16em] text-black/35">RESERVATION</p>
+              <div class="flex items-end justify-between gap-3 mt-2">
+                <div class="min-w-0"><p class="text-xs text-black/45">訂房代號</p><div id="hotelModalBooking" class="font-semibold mt-1 break-all">—</div></div>
+                <button id="copyHotelBookingBtn" type="button" onclick="copyHotelField('booking',this)" class="shrink-0 px-3 py-2 rounded-xl bg-cream text-moss text-xs font-bold"><i class="fa-regular fa-copy mr-1"></i>複製</button>
+              </div>
+            </div>
             <a id="hotelModalPhone" href="#" class="p-4 border-b border-black/5 flex items-center justify-between gap-3"><div><p class="text-[10px] tracking-[0.16em] text-black/35">CAR GPS PHONE</p><p id="hotelModalPhoneText" class="font-semibold mt-1">—</p></div><span class="w-10 h-10 rounded-full bg-ink text-white grid place-items-center"><i class="fa-solid fa-phone"></i></span></a>
-            <div class="p-4"><p class="text-[10px] tracking-[0.16em] text-black/35">ADDRESS</p><p id="hotelModalAddress" class="text-sm leading-6 mt-1">—</p></div>
+            <div class="p-4">
+              <p class="text-[10px] tracking-[0.16em] text-black/35">ADDRESS</p>
+              <div class="flex items-start justify-between gap-3 mt-1">
+                <p id="hotelModalAddress" class="text-sm leading-6 flex-1">—</p>
+                <button id="copyHotelAddressBtn" type="button" onclick="copyHotelField('address',this)" class="shrink-0 px-3 py-2 rounded-xl bg-cream text-moss text-xs font-bold"><i class="fa-regular fa-copy mr-1"></i>複製</button>
+              </div>
+            </div>
           </div>
           <a id="hotelModalMap" target="_blank" href="#" class="w-full rounded-2xl bg-ink text-white py-4 flex items-center justify-center gap-2 font-semibold"><i class="fa-solid fa-location-arrow"></i>Google Maps 導航</a>
         </div>
@@ -997,7 +1023,59 @@
     return [...tripDays.slice(idx), ...tripDays.slice(0,idx)];
   }
 
+  function syncTripDay(day, source='plan', refreshWeather=true){
+    const d=tripDays.find(x=>x.day===day);
+    if(!d) return;
+
+    activePlanDay=day;
+    sessionStorage.setItem('activePlanDay',day);
+
+    // GUIDE 只有有景點資料的日期才同步切換。
+    if(typeof activeGuideDay!=='undefined' && guideGuide.some(g=>g.day===day)){
+      activeGuideDay=day;
+      sessionStorage.setItem('activeGuideDay',day);
+      if(source!=='guide' && document.getElementById('guideDayTabs')) renderGuide();
+    }
+
+    const dateKey=getTripDayKey(d);
+    selectedWeatherDate=dateKey;
+    const meta=weatherMetaForDate(dateKey);
+    currentWeatherRegion=meta.region;
+    localStorage.setItem('trip_weather_region',currentWeatherRegion);
+    renderWeatherDateTabs();
+    updateWeatherTabUI();
+    if(refreshWeather) fetchWeather(currentWeatherRegion,true);
+  }
+
   let activePlanDay = sessionStorage.getItem('activePlanDay') || 'D1';
+
+
+  function itineraryApproxMinutes(item, idx){
+    const raw=String(item.time||'');
+    const match=raw.match(/(\d{1,2}):(\d{2})/);
+    if(match) return Number(match[1])*60+Number(match[2])+idx;
+    const map=[
+      ['早上',480],['上午',540],['中午前',660],['中午',720],['午餐',750],
+      ['下午',840],['移動',810],['傍晚',1020],['晚上',1140],['機場',660],['備選',1080]
+    ];
+    const found=map.find(([k])=>raw.includes(k));
+    return (found ? found[1] : 720) + idx*8;
+  }
+
+  function itineraryProgress(day, idx, japanToday){
+    if(getTripDayKey(day)!==japanToday) return '';
+    const now=new Date();
+    const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Tokyo',hour:'2-digit',minute:'2-digit',hour12:false}).format(now).split(':');
+    const nowMin=Number(parts[0])*60+Number(parts[1]);
+    const mins=day.items.map((x,i)=>itineraryApproxMinutes(x,i));
+    let current=-1;
+    for(let i=0;i<mins.length;i++) if(mins[i]<=nowMin) current=i;
+    const next=current+1<mins.length ? current+1 : -1;
+    if(idx===current) return 'now';
+    if(idx===next) return 'next';
+    if(current>=0 && idx<current) return 'past';
+    return '';
+  }
 
   function renderDays(){
     const japanToday=getJapanTodayKey();
@@ -1044,12 +1122,15 @@
 
         </div>
         <div class="timeline relative mt-5 pl-10 space-y-4">
-          ${d.items.map(i => `
+          ${d.items.map((i,idx) => `
             <div class="relative">
-              <div class="${i.important ? 'bg-[#FFF1E8] border border-[#E8C3AF]' : 'bg-cream'} rounded-2xl p-3.5">
+              <div class="${i.important ? 'bg-[#FFF1E8] border border-[#E8C3AF]' : 'bg-cream'} ${itineraryProgress(d,idx,japanToday)==='now' ? 'ring-2 ring-maple shadow-sm' : itineraryProgress(d,idx,japanToday)==='next' ? 'border border-moss/35' : itineraryProgress(d,idx,japanToday)==='past' ? 'opacity-55' : ''} rounded-2xl p-3.5">
                 <div class="flex items-start justify-between gap-2">
                   <div>
-                    <p class="text-[11px] font-bold ${i.important ? 'text-maple' : 'text-moss'}">${i.time}${i.important ? ' ・ IMPORTANT' : ''}</p>
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <p class="text-[11px] font-bold ${i.important ? 'text-maple' : 'text-moss'}">${i.time}${i.important ? ' ・ IMPORTANT' : ''}</p>
+                      ${itineraryProgress(d,idx,japanToday)==='now' ? '<span class="px-2 py-0.5 rounded-full bg-maple text-white text-[9px] font-bold">NOW</span>' : itineraryProgress(d,idx,japanToday)==='next' ? '<span class="px-2 py-0.5 rounded-full bg-moss text-white text-[9px] font-bold">NEXT</span>' : ''}
+                    </div>
                     <p class="text-sm font-semibold mt-1">${i.text}</p>
                     ${i.note ? `<p class="text-xs text-black/45 mt-1.5 leading-5">${i.note}</p>`:''}
                   </div>
@@ -1106,15 +1187,17 @@
   })();
 
   function selectPlanDay(day){
-    activePlanDay=day;
-    sessionStorage.setItem('activePlanDay',day);
+    syncTripDay(day,'plan',true);
     renderDays();
   }
 
 
+  let currentHotelDetail=null;
+
   function openHotelModal(day){
     const d=tripDays.find(x=>x.day===day);
     if(!d || d.day==='D8') return;
+    currentHotelDetail=d;
     $('#hotelModalTitle').textContent=d.hotel;
     $('#hotelModalBooking').textContent=d.booking?.length ? d.booking.join(' ／ ') : '尚未提供';
     $('#hotelModalPhoneText').textContent=d.hotelPhone || '—';
@@ -1147,6 +1230,27 @@
     $('#hotelModal').classList.remove('hidden');
     document.body.style.overflow='hidden';
   }
+
+  async function copyHotelField(type, btn){
+    if(!currentHotelDetail) return;
+    const text = type==='booking'
+      ? (currentHotelDetail.booking?.join(' / ') || '')
+      : (currentHotelDetail.hotelAddress || '');
+    if(!text) return;
+    try{
+      await navigator.clipboard.writeText(text);
+    }catch(_){
+      const ta=document.createElement('textarea');
+      ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
+    }
+    if(btn){
+      const old=btn.innerHTML;
+      btn.innerHTML='<i class="fa-solid fa-check mr-1"></i>已複製';
+      setTimeout(()=>btn.innerHTML=old,1200);
+    }
+  }
+
   function scrollHotelPhoto(direction){
     const track = document.getElementById('hotelPhotoTrack');
     if(!track) return;
@@ -1330,7 +1434,12 @@
       </article>`).join('');
   }
 
-  function selectGuideDay(day){ activeGuideDay=day; sessionStorage.setItem('activeGuideDay',day); renderGuide(); }
+  function selectGuideDay(day){
+    activeGuideDay=day;
+    sessionStorage.setItem('activeGuideDay',day);
+    syncTripDay(day,'guide',true);
+    renderGuide();
+  }
 
   function goToGuide(ref){
     // Remember where the user was in PLAN before jumping to GUIDE.
@@ -1525,6 +1634,17 @@
     }).join('');
     $$('.weather-date').forEach(b=>b.addEventListener('click',()=>{
       selectedWeatherDate=b.dataset.date;
+      const d=tripDays.find(x=>getTripDayKey(x)===selectedWeatherDate);
+      if(d){
+        activePlanDay=d.day;
+        sessionStorage.setItem('activePlanDay',d.day);
+        if(typeof activeGuideDay!=='undefined' && guideGuide.some(g=>g.day===d.day)){
+          activeGuideDay=d.day;
+          sessionStorage.setItem('activeGuideDay',d.day);
+        }
+        renderDays();
+        if(document.getElementById('guideDayTabs')) renderGuide();
+      }
       const meta=weatherMetaForDate(selectedWeatherDate);
       currentWeatherRegion=meta.region;
       renderWeatherDateTabs();
@@ -1786,6 +1906,7 @@
         name,
         amount,
         payer:selectedPayer,
+        category:selectedCategory,
         photo:photoData || '',
         date:japanDateLabel,
         dateKey:japanDateKey
@@ -1899,6 +2020,7 @@
                 <div class="flex items-center gap-2">
                   <p class="font-semibold text-sm truncate">${escapeHTML(x.name)}</p>
                   ${x.payer ? `<span class="shrink-0 px-2 py-0.5 rounded-full bg-[#F8E9E1] text-maple text-[9px] font-bold">${escapeHTML(x.payer)}</span>` : ''}
+                  ${x.category ? `<span class="shrink-0 px-2 py-0.5 rounded-full bg-mist text-moss text-[8px] font-bold">${escapeHTML(x.category)}</span>` : ''}
                 </div>
                 <p class="text-xs mt-1">¥ ${money(x.amount)} <span class="text-maple">・ NT$ ${money(x.amount*rate)}</span></p>
               </div>
@@ -1912,6 +2034,10 @@
     const arr=getExpenses(), total=arr.reduce((s,x)=>s+x.amount,0);
     const payerTotals = ['V','J','B','D'].map(p=>({p, total:arr.filter(x=>x.payer===p).reduce((sum,x)=>sum+x.amount,0)}));
     $('#expenseTotal').innerHTML = `<div class="font-bold">¥ ${money(total)}</div><div class="text-maple">NT$ ${money(total*rate)}</div>`;
+    const todayKey=getJapanTodayKey();
+    const todayTotal=arr.filter(x=>expenseDateKey(x)===todayKey).reduce((sum,x)=>sum+Number(x.amount||0),0);
+    const todayBox=$('#todayExpenseSummary');
+    if(todayBox) todayBox.innerHTML=`今日 ¥ ${money(todayTotal)} <span class="text-maple ml-1">NT$ ${money(todayTotal*rate)}</span>`;
     const payerSummary = payerTotals.some(x=>x.total>0) ? `
       <div class="grid grid-cols-4 gap-2 mt-4">
         ${payerTotals.map(x=>`<div class="rounded-2xl bg-cream p-2.5 text-center"><p class="text-[10px] font-bold text-moss">${x.p}</p><p class="text-xs font-semibold mt-1">¥ ${money(x.total)}</p></div>`).join('')}
@@ -1924,6 +2050,7 @@
           <div class="flex items-center gap-2">
             <p class="font-semibold truncate">${escapeHTML(x.name)}</p>
             ${x.payer ? `<span class="shrink-0 px-2 py-0.5 rounded-full bg-[#F8E9E1] text-maple text-[10px] font-bold">${escapeHTML(x.payer)} 付款</span>` : ''}
+            ${x.category ? `<span class="shrink-0 px-2 py-0.5 rounded-full bg-mist text-moss text-[9px] font-bold">${escapeHTML(x.category)}</span>` : ''}
           </div>
           <p class="text-sm mt-1">¥ ${money(x.amount)} <span class="text-maple">・ NT$ ${money(x.amount*rate)}</span></p>
           <p class="text-[10px] text-black/35 mt-1">${x.date}</p>
@@ -2003,6 +2130,14 @@
     });
   });
   setTimeout(()=>document.getElementById('appStartup')?.classList.add('hide'),1200);
+
+
+  // Offline PWA cache
+  if('serviceWorker' in navigator){
+    window.addEventListener('load',()=>{
+      navigator.serviceWorker.register('./sw.js').catch(err=>console.warn('Service Worker register failed',err));
+    });
+  }
 
 </script>
 </body>
