@@ -1621,54 +1621,74 @@
     renderWeatherDateTabs();
 
     const cfg=WEATHER_REGIONS[regionKey];
-    const meta=weatherMetaForDate(selectedWeatherDate);
+    const todayJP=new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Tokyo'});
+    const tripStart='2026-11-14', tripEnd='2026-11-21';
+    const outsideTrip=todayJP<tripStart || todayJP>tripEnd;
+    const meta=outsideTrip
+      ? {region:regionKey, place:cfg.label, city:cfg.city}
+      : weatherMetaForDate(selectedWeatherDate);
+
     $('#weatherCity').textContent=meta.city;
     $('#weatherPlaceTitle').textContent=meta.place;
-    const weatherPhoto = WEATHER_PHOTOS[selectedWeatherDate];
-    const weatherHeroPhoto = $('#weatherHeroPhoto');
-    if(weatherHeroPhoto){
-      if(weatherPhoto){
-        weatherHeroPhoto.src = weatherPhoto;
-        weatherHeroPhoto.alt = meta.place + '旅遊景色';
-        weatherHeroPhoto.style.display = 'block';
-      }else{
-        weatherHeroPhoto.removeAttribute('src');
-        weatherHeroPhoto.style.display = 'none';
-      }
-    }
     $('#weatherUpdated').textContent='正在取得最新天氣...';
+    $('#weatherSummary').innerHTML='<div class="h-8 rounded-xl bg-cream animate-pulse"></div>';
     $('#hourlyWeather').innerHTML='<p class="text-sm text-black/35 py-5">更新中...</p>';
 
     try{
-      // Hourly forecast source used for the visual hourly strip.
-      const url=`https://api.open-meteo.com/v1/forecast?latitude=${cfg.lat}&longitude=${cfg.lon}&hourly=temperature_2m,precipitation_probability,weather_code&current=temperature_2m,weather_code&timezone=Asia%2FTokyo&forecast_days=10&_=${Date.now()}`;
-      const r=await fetch(url,{cache:'no-store'});
-      if(!r.ok) throw Error(r.status);
+      // 使用 Open-Meteo 相容性較高的 current_weather=true，
+      // 旅程外只抓今天/明天，速度更快；旅程中抓完整旅行期間。
+      const forecastDays=outsideTrip ? 2 : 10;
+      const url=`https://api.open-meteo.com/v1/forecast?latitude=${cfg.lat}&longitude=${cfg.lon}&current_weather=true&hourly=temperature_2m,precipitation_probability,weather_code&timezone=Asia%2FTokyo&forecast_days=${forecastDays}&_=${Date.now()}`;
+
+      const fetchPromise=fetch(url,{cache:'no-store'});
+      const timeoutPromise=new Promise((_,reject)=>
+        setTimeout(()=>reject(new Error('weather-timeout')),8000)
+      );
+      const r=await Promise.race([fetchPromise,timeoutPromise]);
+
+      if(!r.ok) throw Error(`HTTP ${r.status}`);
       weatherHourlyCache=await r.json();
-      const cur=weatherHourlyCache.current || {};
+      weatherHourlyCache.__todayJP=todayJP;
+
+      const cur=weatherHourlyCache.current_weather || {};
+      const temp=cur.temperature;
+      const code=cur.weathercode;
+
+      if(temp===undefined || temp===null) throw Error('current weather missing');
+
       $('#weatherSummary').innerHTML=`
         <div class="flex items-center justify-between">
           <div>
             <p class="text-xs text-black/40">現在</p>
-            <p class="font-serifjp text-3xl mt-1">${cur.temperature_2m ?? '--'}°</p>
-            <p class="text-sm font-semibold mt-1">${wxText(cur.weather_code)}</p>
+            <p class="font-serifjp text-3xl mt-1">${temp}°</p>
+            <p class="text-sm font-semibold mt-1">${wxText(code)}</p>
           </div>
           <div class="w-16 h-16 rounded-full bg-white grid place-items-center">
-            <i class="fa-solid ${wxIcon(cur.weather_code)} text-3xl text-maple"></i>
+            <i class="fa-solid ${wxIcon(code)} text-3xl text-maple"></i>
           </div>
         </div>`;
+
       $('#weatherUpdated').textContent=`日本時間 ${new Date().toLocaleString('zh-TW',{timeZone:'Asia/Tokyo',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})} 更新`;
       renderHourlyWeather();
     }catch(e){
-      $('#weatherSummary').innerHTML='<p class="text-sm text-center text-black/45">暫時無法取得天氣，請稍後再試。</p>';
+      console.error('Weather fetch failed',e);
+      $('#weatherSummary').innerHTML='<p class="text-sm text-center text-black/45">目前無法取得即時天氣，請點右上角重新整理。</p>';
       $('#hourlyWeather').innerHTML='';
+      $('#weatherUpdated').textContent='天氣連線失敗';
     }
   }
 
   function renderHourlyWeather(){
     if(!weatherHourlyCache?.hourly) return;
     const h=weatherHourlyCache.hourly;
-    const date=selectedWeatherDate || '2026-11-14';
+    const todayJP=weatherHourlyCache.__todayJP || new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Tokyo'});
+    const tripStart='2026-11-14', tripEnd='2026-11-21';
+
+    // 旅程外：逐時預報顯示「今天」；旅程中：顯示所選旅程日期。
+    const date=(todayJP<tripStart || todayJP>tripEnd)
+      ? todayJP
+      : (selectedWeatherDate || todayJP);
+
     const rows=[];
     h.time.forEach((t,i)=>{
       if(t.startsWith(date)){
@@ -1685,7 +1705,12 @@
     });
 
     const tripIndex=tripDates().indexOf(date);
-    $('#weatherDayLabel').textContent=`DAY ${tripIndex>=0 ? tripIndex+1 : ''}・${date.slice(5).replace('-','/')}`;
+    const dayLabel=$('#weatherDayLabel');
+    if(dayLabel){
+      dayLabel.textContent=tripIndex>=0
+        ? `DAY ${tripIndex+1}・${date.slice(5).replace('-','/')}`
+        : `TODAY・${date.slice(5).replace('-','/')}`;
+    }
 
     $('#hourlyWeather').innerHTML = rows.length ? rows.map(x=>`
       <div class="flex-shrink-0 w-[58px] text-center">
@@ -1695,7 +1720,7 @@
         </div>
         <p class="font-serifjp text-lg mt-1">${Math.round(x.temp)}°</p>
         <p class="text-[9px] text-maple mt-1">${x.pop ?? 0}%</p>
-      </div>`).join('') : '<p class="text-sm text-black/35 py-4">此日期暫無逐時預報</p>';
+      </div>`).join('') : '<p class="text-sm text-black/35 py-4">目前暫無逐時預報</p>';
   }
 
   function updateWeatherTabUI(){
@@ -2119,7 +2144,7 @@
   // Offline PWA cache
   if('serviceWorker' in navigator){
     window.addEventListener('load',()=>{
-      navigator.serviceWorker.register('./sw.js').catch(err=>console.warn('Service Worker register failed',err));
+      navigator.serviceWorker.register('./sw.js?v=1.2').catch(err=>console.warn('Service Worker register failed',err));
     });
   }
 

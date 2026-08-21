@@ -1,4 +1,4 @@
-const CACHE_NAME='tokyo-trip-v1.1';
+const CACHE_NAME='tokyo-trip-v1.2';
 const CORE=[
   './','./index.html','./manifest.webmanifest',
   './icon.png','./icon-192.png','./icon-512.png','./apple-touch-icon.png',
@@ -32,30 +32,28 @@ self.addEventListener('fetch',event=>{
   const req=event.request;
   if(req.method!=='GET') return;
 
-  // Navigation: try fresh network first, then cached app shell.
+  const url=new URL(req.url);
+
+  // 重要：天氣 API、Firebase、其他外部網站完全不經過 Service Worker，
+  // 讓 Safari / iPhone PWA 直接向網路請求，避免請求卡住。
+  if(url.origin!==self.location.origin) return;
+
   if(req.mode==='navigate'){
     event.respondWith(
       fetch(req).then(res=>{
         const copy=res.clone();
-        caches.open(CACHE_NAME).then(c=>c.put('./index.html',copy));
+        caches.open(CACHE_NAME).then(c=>c.put('./index.html',copy)).catch(()=>{});
         return res;
       }).catch(()=>caches.match('./index.html').then(r=>r || caches.match('./')))
     );
     return;
   }
 
-  // API calls remain network-first; if they fail, the page keeps last rendered/cached data.
-  if(req.url.includes('api.open-meteo.com') || req.url.includes('firebase')){
-    event.respondWith(fetch(req).catch(()=>caches.match(req)));
-    return;
-  }
-
-  // Images/styles/scripts: cache-first + runtime cache.
   event.respondWith(
     caches.match(req).then(cached=>{
       if(cached) return cached;
       return fetch(req).then(res=>{
-        if(res && (res.ok || res.type==='opaque')){
+        if(res && res.ok){
           const copy=res.clone();
           caches.open(CACHE_NAME).then(c=>c.put(req,copy)).catch(()=>{});
         }
@@ -64,3 +62,4 @@ self.addEventListener('fetch',event=>{
     })
   );
 });
+
